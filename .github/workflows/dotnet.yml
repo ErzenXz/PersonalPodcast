@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore ./back/PersonalPodcasts
+      run: dotnet restore ./back/PersonalPodcast/
     - name: Build
-      run: dotnet build --no-restore ./back/PersonalPodcasts
+      run: dotnet build --no-restore ./back/PersonalPodcast/
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./back/PersonalPodcasts
+      run: dotnet test --no-build --verbosity normal ./back/PersonalPodcast/
