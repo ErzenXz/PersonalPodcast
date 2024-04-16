@@ -6,6 +6,6 @@
         public long UserId { get; set; }
         public long EpisodeId { get; set; }
         public DateTime Date { get; set; }
-        public string Message { get; set; }
+        public required string Message { get; set; }
     }
 }
