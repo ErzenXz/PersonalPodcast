@@ -39,7 +39,7 @@ namespace PersonalPodcast.Controllers
         {
             return new User
             {
-                Id = id,
+                Id = 1,
                 Username = "username",
                 FullName = "fullName",
                 Email = "email",
@@ -79,6 +79,7 @@ namespace PersonalPodcast.Controllers
         public User UpdateUser(int id)
         {
             return new User
+            
             {
                 Id = id,
                 Username = "username",
@@ -129,7 +130,18 @@ namespace PersonalPodcast.Controllers
         [HttpPatch("updateConnectingIp")]
         public User UpdateUserConnectingIp(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpPatch("updateBirthdate")]
@@ -205,7 +217,7 @@ namespace PersonalPodcast.Controllers
         {
             return new User
             {
-                Id = id,
+                Id = 1,
                 Username = "username",
                 FullName = "fullName",
                 Email = "email",

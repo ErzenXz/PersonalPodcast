@@ -11,12 +11,16 @@
       "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\personalpodcast.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:personalpodcast.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\models\\podcast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -49,10 +53,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\personalpodcast.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:personalpodcast.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,15 +62,27 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 13,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "Comment.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\Comment.cs",
               "RelativeDocumentMoniker": "Models\\Comment.cs",
@@ -78,12 +90,11 @@
               "RelativeToolTip": "Models\\Comment.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:54:17.65Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:54:17.65Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Rating.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\Rating.cs",
               "RelativeDocumentMoniker": "Models\\Rating.cs",
@@ -91,12 +102,11 @@
               "RelativeToolTip": "Models\\Rating.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAbAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:54:07.279Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:54:07.279Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Stats.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\Stats.cs",
               "RelativeDocumentMoniker": "Models\\Stats.cs",
@@ -104,12 +114,11 @@
               "RelativeToolTip": "Models\\Stats.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:54:27.578Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:54:27.578Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "AudioAnalytics.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\AudioAnalytics.cs",
               "RelativeDocumentMoniker": "Models\\AudioAnalytics.cs",
@@ -117,12 +126,11 @@
               "RelativeToolTip": "Models\\AudioAnalytics.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAoAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:54:37.274Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:54:37.274Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Episode.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\Episode.cs",
               "RelativeDocumentMoniker": "Models\\Episode.cs",
@@ -130,12 +138,11 @@
               "RelativeToolTip": "Models\\Episode.cs",
               "ViewState": "AQIAAAIAAAAAAAAAAAAywAgAAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:53:57.865Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:53:57.865Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Podcast.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\Podcast.cs",
               "RelativeDocumentMoniker": "Models\\Podcast.cs",
@@ -143,8 +150,7 @@
               "RelativeToolTip": "Models\\Podcast.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAyAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:53:40.184Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:53:40.184Z"
             },
             {
               "$type": "Document",
@@ -161,7 +167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Admin.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Models\\Admin.cs",
               "RelativeDocumentMoniker": "Models\\Admin.cs",
@@ -169,8 +175,7 @@
               "RelativeToolTip": "Models\\Admin.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-15T22:53:22.688Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-15T22:53:22.688Z"
             },
             {
               "$type": "Document",
@@ -193,26 +198,27 @@
               "RelativeDocumentMoniker": "Controllers\\UserController.cs",
               "ToolTip": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Controllers\\UserController.cs",
               "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAoAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-15T22:37:35.122Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 2,
               "Title": "PersonalPodcast.csproj",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\PersonalPodcast.csproj",
               "RelativeDocumentMoniker": "PersonalPodcast.csproj",
               "ToolTip": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\PersonalPodcast.csproj",
               "RelativeToolTip": "PersonalPodcast.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAfAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-04-15T22:37:03.268Z"
+              "WhenOpened": "2024-04-15T22:37:03.268Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -224,7 +230,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
