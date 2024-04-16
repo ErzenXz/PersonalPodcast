@@ -7,5 +7,6 @@
         public long EpisodeId { get; set; }
         public int RatingValue { get; set; }
         public DateTime Date { get; set; }
+        //test push
     }
 }
