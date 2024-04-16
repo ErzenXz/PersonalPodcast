@@ -19,13 +19,36 @@ namespace PersonalPodcast.Controllers
         [HttpGet("getUserById")]
         public User GetUserById(long id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
+            
         }
-
+        
         [HttpGet("getUserByUsername")]
         public User GetUserByUsername(string username)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpGet("getUsersByEmail")]
@@ -54,20 +77,53 @@ namespace PersonalPodcast.Controllers
 
         [HttpPut("updateUser")]
         public User UpdateUser(int id)
-        { 
-            return new User();
+        {
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpPatch("updatePassword")]
         public User UpdateUserPassword(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpPatch("updateLastLogin")]
         public User UpdateUserLastLogin(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpPatch("updateConnectingIp")]
@@ -79,31 +135,86 @@ namespace PersonalPodcast.Controllers
         [HttpPatch("updateBirthdate")]
         public User UpdateUserBirthdate(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpPatch("updateUsername")]
         public User UpdateUserUsername(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpPatch("updateFullName")]
         public User UpdateUserFullName(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpDelete("deleteUserById")]
         public User DeleteUserById(int id)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
 
         [HttpDelete("deleteUserByUsername")]
         public User DeleteUserByUsername(string username)
         {
-            return new User();
+            return new User
+            {
+                Id = id,
+                Username = "username",
+                FullName = "fullName",
+                Email = "email",
+                Password = "password",
+                FirstLogin = DateTime.Now,
+                LastLogin = DateTime.Now,
+                ConnectingIp = "connectingIp",
+                Birthdate = DateTime.Now
+            };
         }
         
     }
