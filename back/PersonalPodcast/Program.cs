@@ -11,7 +11,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var credentials = new Amazon.Runtime.BasicAWSCredentials("AKIAWCTVPQMQSJWH72N7", "scdRdSS/eEdef2RXJ4NLZMSTpa1FLp4WltQrqI0e");
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .Build();
+
+string accessToken = configuration["AWS:AccessKey"];
+string secret = configuration["AWS:SecretKey"];
+
+
+var credentials = new Amazon.Runtime.BasicAWSCredentials(accessToken, secret);
 var config = new AmazonS3Config
 {
     RegionEndpoint = Amazon.RegionEndpoint.EUWest3

@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\controllers\\storagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:controllers\\storagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|c:\\users\\erzen\\desktop\\projekti life\\personalpodcast\\back\\personalpodcast\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5B553760-F3E3-4412-BABF-05A5920FBF6E}|PersonalPodcast.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,15 +38,28 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-04-16T20:02:20.475Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "StorageController.cs",
-              "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Controllers\\StorageController.cs",
-              "RelativeDocumentMoniker": "Controllers\\StorageController.cs",
-              "ToolTip": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Controllers\\StorageController.cs",
-              "RelativeToolTip": "Controllers\\StorageController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAAAAAA",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\erzen\\Desktop\\Projekti LIFE\\PersonalPodcast\\back\\PersonalPodcast\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAwAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T18:05:52.191Z",
+              "WhenOpened": "2024-04-16T20:01:00.691Z",
               "EditorCaption": ""
             }
           ]
