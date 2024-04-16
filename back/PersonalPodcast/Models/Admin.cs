@@ -1,4 +1,6 @@
-﻿namespace PersonalPodcast.Models
+﻿using Microsoft.AspNetCore.SignalR;
+
+namespace PersonalPodcast.Models
 {
     public class Admin
     {
