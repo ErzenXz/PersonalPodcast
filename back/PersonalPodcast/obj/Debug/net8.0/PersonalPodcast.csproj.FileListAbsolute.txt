@@ -31,3 +31,8 @@ C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\obj\De
 C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\obj\Debug\net8.0\PersonalPodcast.pdb
 C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\obj\Debug\net8.0\PersonalPodcast.genruntimeconfig.cache
 C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\obj\Debug\net8.0\ref\PersonalPodcast.dll
+C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\bin\Debug\net8.0\AWSSDK.Extensions.NETCore.Setup.dll
+C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\bin\Debug\net8.0\AWSSDK.S3.dll
+C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+C:\Users\erzen\Desktop\Projekti LIFE\PersonalPodcast\back\PersonalPodcast\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
