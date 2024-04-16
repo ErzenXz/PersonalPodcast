@@ -4,7 +4,7 @@ using PersonalPodcast.Models;
 namespace PersonalPodcast.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("user")]
     public class UserController : ControllerBase
     {
 
