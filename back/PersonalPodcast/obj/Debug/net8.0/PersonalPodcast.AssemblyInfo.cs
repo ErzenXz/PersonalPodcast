@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PersonalPodcast")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a8e0f71b79d05df94041a90147f476f3c71a3e0c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9c22a232500a445de33e650650647274d6e01652")]
 [assembly: System.Reflection.AssemblyProductAttribute("PersonalPodcast")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PersonalPodcast")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

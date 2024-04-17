@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Transfer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace PersonalPodcast.Controllers
             _s3Client = s3Client;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         [Route("upload")]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
