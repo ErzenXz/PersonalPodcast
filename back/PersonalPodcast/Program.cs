@@ -40,7 +40,6 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
     };
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 
 var configuration = new ConfigurationBuilder()
@@ -49,6 +48,7 @@ var configuration = new ConfigurationBuilder()
 
 string accessToken = configuration["AWS:AccessKey"];
 string secret = configuration["AWS:SecretKey"];
+var connectionString = configuration["ConnectionStrings:DefaultConnection"];
 
 
 var credentials = new Amazon.Runtime.BasicAWSCredentials(accessToken, secret);
@@ -62,6 +62,19 @@ builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(credentials, config)
 builder.Services.AddDbContext<DBContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
+
+// Allow CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed((host) => true)
+            .AllowCredentials();
+    });
 });
 
 

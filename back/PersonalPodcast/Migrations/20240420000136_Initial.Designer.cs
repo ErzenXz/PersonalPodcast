@@ -12,8 +12,8 @@ using PersonalPodcast.Data;
 namespace PersonalPodcast.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240417010021_Initial Migration")]
-    partial class InitialMigration
+    [Migration("20240420000136_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -327,8 +327,17 @@ namespace PersonalPodcast.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Role")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("TokenVersion")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .HasColumnType("longtext");

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Models;
+using PersonalPodcast.Models.Security;
 
 namespace PersonalPodcast.Data
 {
@@ -18,5 +19,7 @@ namespace PersonalPodcast.Data
         public DbSet<Comment> comments { get; set; }
         public DbSet<Stats> stats { get; set; }
         public DbSet<AudioAnalytics> audioAnalytics { get; set; }
+        public DbSet<AccountSecurity> accountSecurity { get; set; }
+        public DbSet<IpMitigations> ipMitigations { get; set; }
     }
 }
