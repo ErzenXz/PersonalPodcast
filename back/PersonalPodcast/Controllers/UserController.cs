@@ -116,34 +116,7 @@ namespace PersonalPodcast.Controllers
             user.Birthdate = birthday;
             await _dBContext.SaveChangesAsync();
             return Ok(new { Message = "User updated successfully.", Code = 105 });
-        }
-
-        [HttpPatch("updatePassword")]
-        public async Task<IActionResult> UpdateUserPassword(long id, string oldPassword, string newPassword)
-        {
-            var user = await _dBContext.Users.FindAsync(id);
-            if (user == null)
-            {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
-
-            }
-
-            if(newPassword.Length < 8 || newPassword.Length > 100)
-            {
-                return BadRequest(new { Message = "Password must be between 8 and 100 characters.", Code = 3 });
-            }
-
-            if (!BCrypt.Net.BCrypt.Verify(oldPassword, user.Password))
-            {
-                return BadRequest(new { Message = "Old password is incorrect.", Code = 106 });
-            }
-
-            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "Password updated successfully.", Code = 107 });
-        }
-            
-            
+        }    
 
         [HttpPatch("updateLastLogin")]
         public async Task<IActionResult> UpdateUserLastLogin(long id, string password)

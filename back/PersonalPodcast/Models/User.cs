@@ -15,6 +15,10 @@ namespace PersonalPodcast.Models
         public string? ConnectingIp { get; set; }
         public DateTime? Birthdate { get; set; }
         public string? Role { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
+        public int TokenVersion { get; set; }
+
 
         public Admin Admin { get; set; }
         public Podcast Podcast { get; set; }

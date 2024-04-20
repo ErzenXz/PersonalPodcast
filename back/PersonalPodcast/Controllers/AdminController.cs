@@ -8,8 +8,6 @@ namespace PersonalPodcast.Controllers
     [Route("admin")]
     public class AdminController : ControllerBase
     {
-
-
         private readonly ILogger<UserController> _logger;
         private readonly DBContext _dBContext;
 
