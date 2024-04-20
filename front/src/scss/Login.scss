@@ -1,0 +1,224 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+* {
+   padding: 0;
+   margin: 0;
+   box-sizing: border-box;
+}
+
+$colorWhite: rgba(227, 230, 237, 0.792);
+$colorBlue: #31374a;
+$backgroundImage: "https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
+:root {
+   --white-color: #fff;
+   --blue-color: #eff2f6;
+   --grey-color: #707070;
+   --grey-color-light: #aaa;
+
+   --blue-color-hover: #e3e6ed;
+
+   --link-hover: #333;
+   --text-color: #141824;
+
+   --border: #cbd0dd;
+   --border-hover: #333;
+
+   --sidebar: #fff;
+   --navbar: #fff;
+
+   --navbar-blur: rgba(255, 255, 255, 0.3);
+
+   --button: #f5f7fa;
+   --button-hover: #cbd0dd;
+
+   --scrollbar: #fff;
+   --scrollbar-thumb: rgb(170, 175, 186);
+   --scrollbar-thumb-hover: #d3d6de;
+
+   --body: #f5f7fa;
+   --toast: #777;
+   --toast-color: #e3e6ed;
+   --sidebar-blur: rgba(255, 255, 255, 0.5);
+}
+
+body {
+   background-color: #f5f7fa;
+   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+   font-family: "Rubik", sans-serif;
+   background-image: url($backgroundImage);
+   background-size: cover;
+   background-position: center;
+   background-attachment: fixed;
+   background-repeat: no-repeat;
+   height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+body.dark {
+   background-color: #0f111a;
+}
+
+body.dark {
+   --white-color: #333;
+   --blue-color: #31374a;
+   --grey-color: #f2f2f2;
+   --grey-color-light: #aaa;
+
+   --blue-color-hover: rgb(65, 73, 99);
+
+   --link-hover: white;
+   --text-color: #e3e6ed;
+
+   --border: #31374a;
+   --border-hover: #777;
+
+   --sidebar: #141824;
+   --navbar: #141824;
+
+   --navbar-blur: rgba(20, 24, 36, 0.5);
+
+   --button: #0f111a;
+   --button-hover: #141824;
+
+   --scrollbar: #141824;
+   --scrollbar-thumb: #31374a;
+   --scrollbar-thumb-hover: rgb(65, 73, 99);
+
+   --toast: #31374a;
+   --toast-color: #e3e6ed;
+   --sidebar-blur: rgba(20, 24, 36, 0.5);
+}
+
+.container {
+   .login {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 40px;
+      background-color: rgba(5, 22, 28, 0.3);
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+   }
+
+   .login h1 {
+      font-size: 2.5em;
+      margin-bottom: 35px;
+   }
+
+   .login form {
+      margin-bottom: 35px;
+   }
+
+   .login form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      outline: none;
+      background-color: rgba(5, 22, 28, 0.1);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+      backdrop-filter: blur(10px);
+      color: $colorWhite;
+   }
+
+   .login form input:focus {
+      background-color: rgba(5, 22, 28, 0.3);
+   }
+
+   .login form input::placeholder {
+      color: $colorWhite;
+   }
+
+   .login form button {
+      width: 100%;
+      padding: 10px;
+      border: 0;
+      border-radius: 5px;
+      background-color: rgba(5, 22, 28, 0.5);
+      color: $colorWhite;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+   }
+
+   .login form button:hover {
+      background-color: rgba(5, 22, 28, 0.7);
+   }
+
+   .signup {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 40px;
+      background-color: rgba(5, 22, 28, 0.3);
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+   }
+
+   .signup h1 {
+      font-size: 2.5em;
+      margin-bottom: 35px;
+   }
+
+   .signup form {
+      margin-bottom: 35px;
+   }
+
+   .signup form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      outline: none;
+      background-color: rgba(5, 22, 28, 0.1);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+      backdrop-filter: blur(10px);
+      color: $colorWhite;
+   }
+
+   .signup form input:focus {
+      background-color: rgba(5, 22, 28, 0.3);
+   }
+
+   .signup form input::placeholder {
+      color: $colorWhite;
+   }
+
+   .signup form button {
+      width: 100%;
+      padding: 10px;
+      border: 0 transparent;
+      border-radius: 5px;
+      background-color: rgba(5, 22, 28, 0.5);
+      color: $colorWhite;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+   }
+
+   .signup form button:hover {
+      background-color: rgba(5, 22, 28, 0.7);
+   }
+
+   a {
+      color: $colorWhite;
+      text-decoration: none;
+      cursor: pointer;
+   }
+
+   color: $colorWhite;
+   z-index: 99999;
+}

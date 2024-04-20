@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace PersonalPodcast.Controllers
 {
-    [Route("comment")]
+    [Route("comments")]
     [ApiController]
     public class CommentController : ControllerBase
     {
@@ -109,16 +109,26 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllComments()
+        public async Task<IActionResult> GetAllComments(int page)
         {
-            var comments = await _dbContext.comments.Select(c => new CommentResponse
+            if (page < 1)
             {
-                Id = c.Id,
-                UserId = c.UserId,
-                EpisodeId = c.EpisodeId,
-                Date = c.Date,
-                Message = c.Message
-            }).ToListAsync();
+                return BadRequest("Invalid page number.");
+            }
+
+            var comments = await _dbContext.comments
+                .OrderByDescending(c => c.Date)
+                .Skip((page - 1) * 10)
+                .Take(10)
+                .Select(c => new CommentResponse
+                {
+                    Id = c.Id,
+                    UserId = c.UserId,
+                    EpisodeId = c.EpisodeId,
+                    Date = c.Date,
+                    Message = c.Message
+                })
+                .ToListAsync();
 
             return Ok(comments); 
         }
