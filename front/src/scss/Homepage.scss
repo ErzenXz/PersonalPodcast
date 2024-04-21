@@ -1,0 +1,277 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+.homepage {
+   display: flex;
+   justify-content: center;
+   flex-direction: row;
+   align-items: center;
+   height: 950px;
+   background-image: url("https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+   background-size: cover;
+   background-position: center;
+   background-blend-mode: darken;
+   background-repeat: no-repeat;
+   font-family: "Rubik", sans-serif;
+   text-align: center;
+
+   text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+   color: white;
+   .item1 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      flex-grow: 2;
+      padding: 20px;
+      max-width: 700px;
+      margin-left: 20%;
+
+      h1 {
+         font-size: 3.5em;
+         margin-bottom: 55px;
+      }
+
+      p {
+         font-size: 1.5em;
+      }
+   }
+
+   .item2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+      padding: 20px;
+
+      img {
+         width: 500px;
+         height: 50%;
+         border-radius: 5px;
+         object-fit: cover;
+         margin-right: 10px;
+         margin-bottom: -274px;
+      }
+   }
+}
+
+.categories {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-wrap: wrap;
+   background-color: #272a33;
+   font-family: "Rubik", sans-serif;
+   padding-top: 75px;
+   padding-bottom: 75px;
+
+   .category {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+      padding: 30px;
+      background-color: #292c35;
+      border-radius: 5px;
+      border: 0.7px solid #414755;
+      color: #ebecf0;
+      transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1) 0ms;
+
+      h2 {
+         font-size: 1.5em;
+         margin-bottom: 10px;
+      }
+
+      p {
+         font-size: 1em;
+      }
+   }
+
+   .category:hover {
+      background-color: #414755;
+      cursor: pointer;
+   }
+}
+
+.recommendetEpisodes {
+   color: #ebecf0;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   flex-direction: column;
+   background-color: #272a33;
+   font-family: "Rubik", sans-serif;
+   padding-top: 25px;
+   padding-bottom: 75px;
+   h2 {
+      font-size: 2em;
+      margin-bottom: 80px;
+   }
+
+   .episode {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      background-color: #292c35;
+      border-radius: 5px;
+      border: 0.7px solid #414755;
+      transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1) 0ms;
+      width: 800px;
+
+      .info {
+         flex-grow: 1;
+         padding: 10px;
+
+         .title {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+         }
+
+         .description {
+            font-size: 1em;
+         }
+
+         .more {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+
+            .duration {
+               font-size: 0.8em;
+               margin-right: 10px;
+            }
+
+            .rating,
+            .date,
+            .podcast {
+               margin-right: 10px;
+               font-size: 0.8em;
+            }
+         }
+      }
+
+      .image {
+         flex-grow: 0;
+         padding: 10px;
+
+         img {
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+            object-fit: cover;
+         }
+      }
+   }
+}
+
+.viewMoreButton {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 20px;
+   background-color: #292c35;
+   border-radius: 5px;
+   border: 0.7px solid #414755;
+   transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1) 0ms;
+   font-family: "Rubik", sans-serif;
+   margin-top: 20px;
+   user-select: none;
+
+   &:hover {
+      background-color: #414755;
+      cursor: pointer;
+   }
+
+   a {
+      color: #ebecf0;
+      text-decoration: none;
+   }
+}
+
+.viewMoreButton:hover {
+   background-color: #414755;
+   cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+   .homepage {
+      flex-direction: column;
+      height: 100%;
+      padding: 20px;
+      padding-top: 95px;
+
+      .item1 {
+         margin-left: 0;
+      }
+
+      .item2 {
+         img {
+            width: 300px;
+            height: 300px;
+            margin-bottom: 0;
+         }
+      }
+   }
+
+   .categories {
+      padding-top: 20px;
+      padding-bottom: 20px;
+   }
+
+   .recommendetEpisodes {
+      padding-top: 20px;
+      padding-bottom: 20px;
+
+      h2 {
+         margin-bottom: 20px;
+      }
+
+      .episode {
+         width: 90%;
+
+         .info {
+            .title {
+               font-size: 1.2em;
+               margin-bottom: 20px;
+            }
+
+            .description {
+               font-size: 0.9em;
+            }
+
+            .more {
+               .duration {
+                  font-size: 0.7em;
+               }
+
+               .rating,
+               .date,
+               .podcast {
+                  font-size: 0.7em;
+               }
+            }
+         }
+
+         .image {
+            img {
+               display: none;
+            }
+         }
+      }
+   }
+
+   .viewMoreButton {
+      margin-top: 20px;
+   }
+
+   .viewMoreButton:hover {
+      background-color: #414755;
+      cursor: pointer;
+   }
+
+   .viewMoreButton a {
+      color: #ebecf0;
+      text-decoration: none;
+   }
+}

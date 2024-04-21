@@ -8,6 +8,16 @@
 
 $colorWhite: rgba(227, 230, 237, 0.792);
 $colorBlue: #31374a;
+
+// $backgroundImage: "";
+$backgroundImage: "";
+
+.container {
+   .login,
+   .signup {
+      width: 100vw;
+      height: 100vh;
+
 $backgroundImage: "https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 :root {
@@ -97,12 +107,45 @@ body.dark {
       width: 100%;
       max-width: 400px;
       margin: 0 auto;
+
       padding: 40px;
       background-color: rgba(5, 22, 28, 0.3);
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
       border: 1px solid transparent;
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      overflow: hidden;
+   }
+
+   .login h1,
+   .signup h1 {
+      font-size: 3.5em;
+      margin-bottom: 55px;
+   }
+
+   .login form,
+   .signup form {
+      margin-bottom: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 100%;
+      max-width: 500px;
+   }
+
+   .login form input,
+   .signup form input {
+      width: 100%;
+      padding: 20px;
+      margin-bottom: 10px;
+      border: 1px solid transparent;
+      border-radius: 12px;
       border-radius: 10px;
       backdrop-filter: blur(10px);
    }
@@ -127,6 +170,26 @@ body.dark {
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
       backdrop-filter: blur(10px);
       color: $colorWhite;
+      font-size: 1em;
+   }
+
+   .login form input:focus,
+   .signup form input:focus {
+      background-color: rgba(5, 22, 28, 0.3);
+      transform: scale(0.98);
+   }
+
+   .login form input::placeholder,
+   .signup form input::placeholder {
+      color: $colorWhite;
+   }
+
+   .login form button,
+   .signup form button {
+      width: 100%;
+      padding: 20px;
+      border: 0;
+      border-radius: 12px;
    }
 
    .login form input:focus {
@@ -149,6 +212,122 @@ body.dark {
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
    }
 
+   .login form button:hover,
+   .signup form button:hover {
+      background-color: rgba(5, 22, 28, 0.7);
+   }
+
+   .login form button:active,
+   .signup form button:active {
+      transform: scale(0.98);
+   }
+
+   a {
+      color: $colorWhite;
+      text-decoration: none;
+      cursor: pointer;
+   }
+
+   a:hover {
+      text-decoration: underline;
+   }
+
+   color: $colorWhite;
+   z-index: 99999;
+   position: relative;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-color: #f5f7fa;
+   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+   font-family: "Rubik", sans-serif;
+   background-image: url($backgroundImage);
+   background-size: cover;
+   background-attachment: fixed;
+   background-repeat: no-repeat;
+   height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   user-select: none;
+   overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+   .container {
+      .login,
+      .signup {
+         width: 100vw;
+         height: 100vh;
+         border-radius: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         flex-direction: column;
+      }
+   }
+
+   .container .login h1,
+   .container .signup h1 {
+      font-size: 2em;
+      margin-bottom: 25px;
+   }
+
+   .container .login form,
+   .container .signup form {
+      width: 100vw;
+      padding: 20px;
+      margin-bottom: 25px;
+      overflow-y: auto;
+      justify-content: flex-start;
+   }
+
+   .container .login form input,
+   .container .signup form input {
+      padding: 15px;
+      font-size: 0.8em;
+   }
+
+   .container .login form button,
+   .container .signup form button {
+      padding: 10px;
+   }
+}
+
+/* Animation when switching between login and signup */
+@keyframes slideIn {
+   0% {
+      transform: translateX(100%);
+   }
+   100% {
+      transform: translateX(0);
+   }
+}
+
+.signup {
+   animation: slideIn 0.5s forwards;
+}
+
+@keyframes popIn {
+   0% {
+      transform: scale(0);
+   }
+   100% {
+      transform: scale(1);
+   }
+}
+
+@keyframes popOut {
+   0% {
+      transform: scale(1);
+   }
+   100% {
+      transform: scale(0);
+   }
+}
+
+.login {
+   animation: popIn 0.5s forwards;
    .login form button:hover {
       background-color: rgba(5, 22, 28, 0.7);
    }
