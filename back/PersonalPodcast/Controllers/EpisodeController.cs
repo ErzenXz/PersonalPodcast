@@ -65,7 +65,7 @@ namespace PersonalPodcast.Controllers
                 if (episode == null)
                 {
                     _logger.LogWarning("Episode with Id {EpisodeId} not found", id);
-                    return NotFound($"Episode with Id {id} not found.");
+                    return NotFound(new { Message = $"Episode with Id {id} not found.", Code = 59 });
                 }
                 var episodeResponse = new EpisodeResponse
                 {
@@ -96,7 +96,7 @@ namespace PersonalPodcast.Controllers
         {
             if (page < 1)
             {
-                return BadRequest("Invalid page number.");
+                return BadRequest(new { Message = "Invalid page number.", Code = 55 });
             }
 
             try
@@ -140,7 +140,7 @@ namespace PersonalPodcast.Controllers
                 if (episode == null)
                 {
                     _logger.LogWarning("Podcast with Id {PodcastId} not found", id);
-                    return NotFound($"Podcast with Id {id} not found.");
+                    return NotFound(new { Message = $"Episode with Id {id} not found.", Code = 59 });
                 }
                 episode.Id = request.Id;
                 episode.PodcastId = request.PodcastId;
@@ -178,7 +178,7 @@ namespace PersonalPodcast.Controllers
                 if (episode == null)
                 {
                     _logger.LogWarning("Episode with Id {EpisodeId} not found", id);
-                    return NotFound($"Episode with Id {id} not found.");
+                    return NotFound(new { Message = $"Episode with Id {id} not found.", Code = 59 });
                 }
 
                 _dBContext.Episodes.Remove(episode);

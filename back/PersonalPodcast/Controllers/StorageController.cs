@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Permissions;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Transfer;
@@ -28,7 +29,7 @@ namespace PersonalPodcast.Controllers
             try
             {
                 if (file == null || file.Length == 0)
-                    return BadRequest("No file provided.");
+                    return BadRequest(new { Message = "No file provided.",Code = 7 });
 
                 // Check if the file is img, audio or video if else deny
 
@@ -44,7 +45,7 @@ namespace PersonalPodcast.Controllers
 
                 if (file.Length > 1073741824)
                 {
-                    return BadRequest("File is too large. Max file size is 1GB");
+                    return BadRequest(new { Message = "File is too large. Max file size is 1GB", Code = 6 });
                 }
 
                 // Generate a unique key for the S3 object (e.g., using Guid)
