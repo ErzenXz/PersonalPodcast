@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
@@ -8,7 +9,7 @@ using PersonalPodcast.Models;
 namespace PersonalPodcast.Controllers
 {
     [ApiController]
-    [Route("podcast")]
+    [Route("podcasts")]
     public class PodcastController : ControllerBase
     {
 
@@ -20,7 +21,7 @@ namespace PersonalPodcast.Controllers
             _logger = logger;
             _dBContext = dBContext;
         }
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Create([FromBody]PodcastRequest request)
         {
             try
@@ -40,7 +41,7 @@ namespace PersonalPodcast.Controllers
                 _dBContext.Podcasts.Add(podcast);
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Podcast created successfully: {PodcastId}", podcast.Id);
+                _logger.LogInformation($"Podcast created successfully: {podcast.Id}");
 
                 return CreatedAtAction(nameof(GetPodcast), new { id = podcast.Id }, podcast);
             }
@@ -59,7 +60,7 @@ namespace PersonalPodcast.Controllers
                 var podcast = await _dBContext.Podcasts.FindAsync(id);
                 if (podcast == null)
                 {
-                    _logger.LogWarning("Podcast with Id {PodcastId} not found", id);
+                    _logger.LogWarning($"Podcast with Id {id} not found");
                     return NotFound(new { Message = $"Podcast with Id {id} not found.", Code = 60 });
                 }
                 var podcastResponse = new PodcastResponse
@@ -107,9 +108,9 @@ namespace PersonalPodcast.Controllers
                         PosterImg = c.PosterImg,
                         AudioFileUrl = c.AudioFileUrl,
                         VideoFileUrl = c.VideoFileUrl,
-                        PublisherId = c.PublisherId
-
-
+                        PublisherId = c.PublisherId,
+                        CreatedDate = c.CreatedDate,
+                        LastUpdate = c.LastUpdate
                     })
                     .ToListAsync();
 
@@ -122,7 +123,7 @@ namespace PersonalPodcast.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Update(long id, [FromBody] PodcastRequest request)
         {
             try
@@ -130,7 +131,7 @@ namespace PersonalPodcast.Controllers
                 var podcast = await _dBContext.Podcasts.FindAsync(id);
                 if(podcast == null)
                 {
-                    _logger.LogWarning("Podcast with Id {PodcastId} not found", id);
+                    _logger.LogWarning($"Podcast with Id {id} not found", id);
                     return NotFound(new { Message = $"Podcast with Id {id} not found.", Code = 60 });
                 }
 
@@ -145,7 +146,7 @@ namespace PersonalPodcast.Controllers
 
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Podcast with Id {PodcastId} updated successfully", id);
+                _logger.LogInformation($"Podcast with Id {id} updated successfully", id);
 
                 return NoContent();
             }
@@ -157,7 +158,7 @@ namespace PersonalPodcast.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Delete(long id)
         {
             try
@@ -172,9 +173,9 @@ namespace PersonalPodcast.Controllers
                 _dBContext.Podcasts.Remove(podcast);
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Podcast  with Id {PodcastId} deleted successfully", id);
+                _logger.LogInformation($"Podcast  with Id {id} deleted successfully", id);
 
-                return NoContent();
+                return Ok("Podcast deleted succesfuly!");
                 
             }
             catch(Exception ex)

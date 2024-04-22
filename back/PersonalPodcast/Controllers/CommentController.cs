@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
 using PersonalPodcast.DTO;
 using PersonalPodcast.Models;
+using System;
 using System.Security.Claims;
 
 namespace PersonalPodcast.Controllers
@@ -21,13 +23,14 @@ namespace PersonalPodcast.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "User,Admin,SuperAdmin")]
         public async Task<IActionResult> Create([FromBody] CommentRequest request)
         {
             if (request == null)
             {
                 return BadRequest(new{ Message = "Invalid comment data.", Code = 54 });
             }
+
 
             var comment = new Comment
             {
@@ -68,7 +71,7 @@ namespace PersonalPodcast.Controllers
             var comment = await _dbContext.comments.FindAsync(id);
             if (comment == null)
             {
-                _logger.LogWarning("Comment with Id {CommentId} not found", id);
+                _logger.LogWarning($"Comment with Id {id} not found", id);
                 return NotFound();
             }
 
@@ -85,10 +88,13 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet("{episodeId}")]
-        public async Task<IActionResult> GetCommentsByEpisodeId(long episodeId)
+        public async Task<IActionResult> GetCommentsByEpisodeId(long episodeId, int page)
         {
             var comments = await _dbContext.comments
                 .Where(c => c.EpisodeId == episodeId)
+                .OrderByDescending(c => c.Date)
+                .Skip((page - 1) * 10)
+                .Take(10)
                 .Select(c => new CommentResponse
                 {
                     Id = c.Id,
@@ -133,7 +139,7 @@ namespace PersonalPodcast.Controllers
             return Ok(comments); 
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles ="Admin,SuperAdmin")]
         public async Task<IActionResult> Update(int id, [FromBody] CommentRequest request)
         {
             if (request == null)
@@ -141,10 +147,17 @@ namespace PersonalPodcast.Controllers
                 return BadRequest(new{ Message = "Invalid comment data.",Code = 56 });
             }
 
+            DateTime maxAllowedTimeBefore = DateTime.UtcNow.AddMinutes(-10);
+
+            if (request.Date > DateTime.UtcNow || request.Date < maxAllowedTimeBefore)
+            {
+                return BadRequest(new { Message = "Invalid date.", Code = 61 });
+            }
+
             var comment = await _dbContext.comments.FindAsync(id);
             if (comment == null)
             {
-                _logger.LogWarning("Comment with Id {CommentId} not found", id);
+                _logger.LogWarning($"Comment with Id {id} not found", id);
                 return NotFound(new { Message = $"Comment with Id {id} not found.", Code = 58 });
             }
 
@@ -168,41 +181,27 @@ namespace PersonalPodcast.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Delete(long id)
         {
-          
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;//TODO
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
-
-            
+                     
             var comment = await _dbContext.comments.FindAsync(id);
             if (comment == null)
             {
-                _logger.LogWarning("Comment with Id {CommentId} not found", id);
+                _logger.LogWarning($"Comment with Id {id} not found", id);
                 return NotFound(new { Message = $"Comment with Id {id} not found.", Code = 58 });
-            }
-
-            
-            if (comment.UserId != long.Parse(userId))
-            {
-                _logger.LogWarning("User is not authorized to delete the comment with Id {CommentId}", id);
-                return Forbid(); 
             }
 
             try
             {
                 _dbContext.comments.Remove(comment);
                 await _dbContext.SaveChangesAsync();
-                _logger.LogInformation("Comment with Id {CommentId} deleted successfully", id);
+                _logger.LogInformation($"Comment with Id {id} deleted successfully", id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting the comment.");
+                _logger.LogError(ex, $"An error occurred while deleting the comment with ID {id}.");
                 return StatusCode(500, "An error occurred while deleting the comment.");
             }
         }

@@ -15,7 +15,7 @@ namespace PersonalPodcast.Models
         public DateTime LastUpdate { get; set; }
         public required string PosterImg { get; set; }
         public required string AudioFileUrl { get; set; }
-        public long? VideoFileUrl { get; set; }
+        public string? VideoFileUrl { get; set; }
         public long Length { get; set; }
         public long Views { get; set; }
         public long PublisherId { get; set; }

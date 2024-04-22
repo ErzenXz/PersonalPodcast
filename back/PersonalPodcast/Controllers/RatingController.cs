@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
 using PersonalPodcast.DTO;
@@ -21,11 +22,53 @@ namespace PersonalPodcast.Controllers
             _logger = logger;
             _dBContext = dBContext;
         }
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] RatingRequest request)
         {
             try
             {
+
+                if (request == null)
+                {
+                    return BadRequest(new { Message = "Invalid rating data.", Code = 54 });
+                }
+
+                if (request.RatingValue < 1 || request.RatingValue > 5)
+                {
+                    return BadRequest(new { Message = "Rating value must be between 1 and 5.", Code = 55 });
+                }
+
+                if(await _dBContext.ratings.AnyAsync(r => r.UserId == request.UserId && r.EpisodeId == request.EpisodeId))
+                {
+                    // Update the existing rating
+                    var existingRating = await _dBContext.ratings
+                        .Where(r => r.UserId == request.UserId && r.EpisodeId == request.EpisodeId)
+                        .FirstOrDefaultAsync();
+                    if (existingRating != null)
+                    {
+                           existingRating.RatingValue = request.RatingValue;
+                        existingRating.Date = request.Date;
+                        _dBContext.ratings.Update(existingRating);
+                        await _dBContext.SaveChangesAsync();
+
+                        var ratingResponse = new RatingResponse
+                        {
+                            Id = existingRating.Id,
+                            UserId = existingRating.UserId,
+                            EpisodeId = existingRating.EpisodeId,
+                            RatingValue = existingRating.RatingValue,
+                            Date = existingRating.Date
+                        };
+
+                        _logger.LogInformation("Rating updated successfully: {RatingId}", existingRating.Id);
+
+                        return CreatedAtAction(nameof(GetRating), new { id = existingRating.Id }, ratingResponse);  
+                    }
+
+                    return NotFound();
+                } else
+                {
+
                 var rating = new Rating
                 {
                     UserId = request.UserId,
@@ -37,7 +80,7 @@ namespace PersonalPodcast.Controllers
                 _dBContext.ratings.Add(rating);
                 await _dBContext.SaveChangesAsync();
 
-                var ratingResponse = new RatingResponse
+                var ratingResponse2 = new RatingResponse
                 {
                     Id = rating.Id,
                     UserId = rating.UserId,
@@ -48,7 +91,10 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Rating created successfully: {RatingId}", rating.Id);
 
-                return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, ratingResponse);
+                return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, ratingResponse2);
+                
+                }
+
             }
             catch (Exception ex)
             {
@@ -80,9 +126,15 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRatings()
+        public async Task<IActionResult> GetAllRatings(int page)
         {
-            var ratings = await _dBContext.ratings.Select(r => new RatingResponse
+
+            if (page < 1)
+            {
+                return BadRequest(new { Message = "Invalid page number.", Code = 55 });
+            }
+
+            var ratings = await _dBContext.ratings.Skip((page - 1) * 10).Take(10).Select(r => new RatingResponse                
             {
                 Id = r.Id,
                 UserId = r.UserId,
@@ -106,7 +158,7 @@ namespace PersonalPodcast.Controllers
 
                 if (episodeRatings.Count == 0)
                 {
-                    return Ok(0);
+                    return Ok(-1);
                 }
 
                 double averageRating = episodeRatings.Average();
@@ -119,14 +171,9 @@ namespace PersonalPodcast.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Update(long id, [FromBody] RatingRequest request)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
 
             try
             {
@@ -137,10 +184,11 @@ namespace PersonalPodcast.Controllers
                     return NotFound($"Rating with Id {id} not found.");
                 }
 
-                if (rating.UserId != long.Parse(userId))
+                if (request.RatingValue < 1 || request.RatingValue > 5)
                 {
-                    return Forbid();
+                    return BadRequest(new { Message = "Rating value must be between 1 and 5.", Code = 55 });
                 }
+
 
                 rating.UserId = request.UserId;
                 rating.EpisodeId = request.EpisodeId;
@@ -161,14 +209,9 @@ namespace PersonalPodcast.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Delete(long id)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
 
             try
             {
@@ -177,11 +220,6 @@ namespace PersonalPodcast.Controllers
                 {
                     _logger.LogWarning("Rating with Id {RatingId} not found", id);
                     return NotFound($"Rating with Id {id} not found.");
-                }
-
-                if (rating.UserId != long.Parse(userId))
-                {
-                    return Forbid();
                 }
 
                 _dBContext.ratings.Remove(rating);

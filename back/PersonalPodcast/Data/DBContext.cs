@@ -21,5 +21,6 @@ namespace PersonalPodcast.Data
         public DbSet<AudioAnalytics> audioAnalytics { get; set; }
         public DbSet<AccountSecurity> accountSecurity { get; set; }
         public DbSet<IpMitigations> ipMitigations { get; set; }
+        public DbSet<ResetEmail> resetEmails { get; set; }
     }
 }
