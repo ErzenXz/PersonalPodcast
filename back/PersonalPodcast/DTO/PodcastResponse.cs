@@ -11,6 +11,8 @@
         public string AudioFileUrl { get; set; }
         public string VideoFileUrl { get; set; }
         public long PublisherId { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? LastUpdate { get; set; }
 
     }
 }

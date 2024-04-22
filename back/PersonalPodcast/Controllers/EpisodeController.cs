@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
@@ -22,7 +23,7 @@ namespace PersonalPodcast.Controllers
             _dBContext = dBContext;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Create([FromBody] EpisodeRequest request)
         {
             try
@@ -39,7 +40,9 @@ namespace PersonalPodcast.Controllers
                     VideoFileUrl = request.VideoFileUrl,
                     Length = request.Length,
                     Views = request.Views,
-                    PublisherId = request.PublisherId
+                    PublisherId = request.PublisherId,
+                    CreatedDate = DateTime.UtcNow,
+                    LastUpdate = DateTime.UtcNow
                 };
 
                 _dBContext.Episodes.Add(episode);
@@ -52,7 +55,7 @@ namespace PersonalPodcast.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating episode");
-                return StatusCode(500, "An error occurred while processing the request.");
+                return StatusCode(500, "An error occurred while processing the request. " + ex.Message);
             }
         }
 
@@ -80,7 +83,9 @@ namespace PersonalPodcast.Controllers
                     VideoFileUrl = episode.VideoFileUrl,
                     Length = episode.Length,
                     Views = episode.Views,
-                    PublisherId = episode.PublisherId
+                    PublisherId = episode.PublisherId,
+                    CreatedDate = episode.CreatedDate,
+                    LastUpdate = episode.LastUpdate
 
                 };
                 return Ok(episodeResponse);
@@ -118,8 +123,9 @@ namespace PersonalPodcast.Controllers
                         VideoFileUrl = c.VideoFileUrl,
                         Length = c.Length,
                         Views = c.Views,
-                        PublisherId = c.PublisherId
-
+                        PublisherId = c.PublisherId,
+                        CreatedDate = c.CreatedDate,
+                        LastUpdate = c.LastUpdate
                     })
                     .ToListAsync();
 
@@ -128,11 +134,11 @@ namespace PersonalPodcast.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while retrieving all episodes");
-                return StatusCode(500, "An error occurred while processing the request.");
+                return StatusCode(500, "An error occurred while processing the request. " + ex.Message);
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Update(long id, [FromBody] EpisodeRequest request)
         {
             try
@@ -143,6 +149,7 @@ namespace PersonalPodcast.Controllers
                     _logger.LogWarning("Podcast with Id {PodcastId} not found", id);
                     return NotFound(new { Message = $"Episode with Id {id} not found.", Code = 59 });
                 }
+
                 episode.Id = request.Id;
                 episode.PodcastId = request.PodcastId;
                 episode.Title = request.Title;
@@ -154,6 +161,7 @@ namespace PersonalPodcast.Controllers
                 episode.Length = request.Length;
                 episode.Views = request.Views;
                 episode.PublisherId = request.PublisherId;
+                episode.LastUpdate = DateTime.UtcNow;
 
                 await _dBContext.SaveChangesAsync();
 
@@ -170,7 +178,7 @@ namespace PersonalPodcast.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Delete(long id)
         {
             try
@@ -185,7 +193,7 @@ namespace PersonalPodcast.Controllers
                 _dBContext.Episodes.Remove(episode);
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Episode with Id {EpisodeId} deleted successfully", id);
+                _logger.LogInformation($"Episode with Id {id} deleted successfully", id);
 
                 return NoContent();
 

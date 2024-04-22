@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
 using PersonalPodcast.DTO;
@@ -22,21 +23,20 @@ namespace PersonalPodcast.Controllers
             _dBContext = dBContext;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CategoryRequest request)
+        [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
+        public async Task<IActionResult> Create(CategoryRequest request)
         {
             try
             {
                 var category = new Category
                 {
-                    Name = request.Name,
-                    Podcast = request.Podcast
+                    Name = request.Name
                 };
 
                 _dBContext.categories.Add(category);
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Category created successfully: {CategoryId}", category.Id);
+                _logger.LogInformation($"Category created successfully: {category.Id}", category.Id);
 
                 return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
             }
@@ -55,15 +55,14 @@ namespace PersonalPodcast.Controllers
                 var category = await _dBContext.categories.FindAsync(id);
                 if (category == null)
                 {
-                    _logger.LogWarning("Category with Id {CategoryId} not found", id);
+                    _logger.LogWarning($"Category with Id {id} not found", id);
                     return NotFound(new { Message = $"Category with Id {id} not found.", Code = 57 });
                 }
 
                 var categoryResponse = new CategoryResponse
                 {
                     Id = category.Id,
-                    Name = category.Name,
-                    Podcast = category.Podcast
+                    Name = category.Name
                 };
 
                 return Ok(categoryResponse);
@@ -84,8 +83,7 @@ namespace PersonalPodcast.Controllers
                     .Select(c => new CategoryResponse
                     {
                         Id = c.Id,
-                        Name = c.Name,
-                        Podcast = c.Podcast
+                        Name = c.Name
                     })
                     .ToListAsync();
 
@@ -98,7 +96,7 @@ namespace PersonalPodcast.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}") ,Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Update(long id, [FromBody] CategoryRequest request)
         {
             try
@@ -106,16 +104,15 @@ namespace PersonalPodcast.Controllers
                 var category = await _dBContext.categories.FindAsync(id);
                 if (category == null)
                 {
-                    _logger.LogWarning("Category with Id {CategoryId} not found", id);
+                    _logger.LogWarning($"Category with Id {id} not found", id);
                     return NotFound(new { Message = $"Category with Id {id} not found.", Code = 57 });
                 }
 
                 category.Name = request.Name;
-                category.Podcast = request.Podcast;
 
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Category with Id {CategoryId} updated successfully", id);
+                _logger.LogInformation($"Category with Id {category.Id} updated successfully", id);
 
                 return NoContent();
             }
@@ -126,7 +123,7 @@ namespace PersonalPodcast.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Delete(long id)
         {
             try
@@ -134,14 +131,14 @@ namespace PersonalPodcast.Controllers
                 var category = await _dBContext.categories.FindAsync(id);
                 if (category == null)
                 {
-                    _logger.LogWarning("Category with Id {CategoryId} not found", id);
+                    _logger.LogWarning($"Category with Id {id} not found", id);
                     return NotFound(new { Message = $"Category with Id {id} not found.", Code = 57 });
                 }
 
                 _dBContext.categories.Remove(category);
                 await _dBContext.SaveChangesAsync();
 
-                _logger.LogInformation("Category with Id {CategoryId} deleted successfully", id);
+                _logger.LogInformation($"Category with Id {category.Id} deleted successfully", id);
 
                 return NoContent();
             }

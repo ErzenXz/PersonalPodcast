@@ -22,7 +22,7 @@ namespace PersonalPodcast.Controllers
             _s3Client = s3Client;
         }
 
-        [HttpPost, Authorize(Roles = "Admin")]
+        [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
         [Route("upload")]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
@@ -48,7 +48,7 @@ namespace PersonalPodcast.Controllers
                     return BadRequest(new { Message = "File is too large. Max file size is 1GB", Code = 6 });
                 }
 
-                // Generate a unique key for the S3 object (e.g., using Guid)
+                // Generate a unique key for the S3 object (using Guid)
                 var s3ObjectKey = Guid.NewGuid().ToString();
 
                 using (var stream = file.OpenReadStream())
@@ -63,6 +63,25 @@ namespace PersonalPodcast.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error uploading file: {ex.Message}");
+            }
+        }
+
+        [HttpDelete, Authorize(Roles = "Admin,SuperAdmin")]
+        [Route("delete")]
+        public async Task<IActionResult> DeleteFile(string key)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(key))
+                    return BadRequest(new { Message = "No key provided.", Code = 8 });
+
+                await _s3Client.DeleteObjectAsync(BucketName, key);
+
+                return Ok(new { Code = 8, Message = "File deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting file: {ex.Message}");
             }
         }
     }
