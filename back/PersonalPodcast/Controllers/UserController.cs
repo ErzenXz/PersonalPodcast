@@ -115,7 +115,7 @@ namespace PersonalPodcast.Controllers
             user.ConnectingIp = conIP;
             user.Birthdate = birthday;
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "User updated successfully.", Code = 105 });
+            return Ok(new { Message = "User updated successfully.", Code = 150 });
         }    
 
         [HttpPatch("updateLastLogin")]

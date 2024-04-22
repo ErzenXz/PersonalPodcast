@@ -26,7 +26,7 @@ namespace PersonalPodcast.Controllers
         {
             if (request == null)
             {
-                return BadRequest("Invalid comment data.");
+                return BadRequest(new{ Message = "Invalid comment data.", Code = 54 });
             }
 
             var comment = new Comment
@@ -113,7 +113,7 @@ namespace PersonalPodcast.Controllers
         {
             if (page < 1)
             {
-                return BadRequest("Invalid page number.");
+                return BadRequest(new{ Message = "Invalid page number.", Code = 55 });
             }
 
             var comments = await _dbContext.comments
@@ -138,14 +138,14 @@ namespace PersonalPodcast.Controllers
         {
             if (request == null)
             {
-                return BadRequest("Invalid comment data.");
+                return BadRequest(new{ Message = "Invalid comment data.",Code = 56 });
             }
 
             var comment = await _dbContext.comments.FindAsync(id);
             if (comment == null)
             {
                 _logger.LogWarning("Comment with Id {CommentId} not found", id);
-                return NotFound($"Comment with Id {id} not found.");
+                return NotFound(new { Message = $"Comment with Id {id} not found.", Code = 58 });
             }
 
             
@@ -183,7 +183,7 @@ namespace PersonalPodcast.Controllers
             if (comment == null)
             {
                 _logger.LogWarning("Comment with Id {CommentId} not found", id);
-                return NotFound($"Comment with Id {id} not found.");
+                return NotFound(new { Message = $"Comment with Id {id} not found.", Code = 58 });
             }
 
             

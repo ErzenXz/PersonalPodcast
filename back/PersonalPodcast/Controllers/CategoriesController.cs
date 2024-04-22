@@ -56,7 +56,7 @@ namespace PersonalPodcast.Controllers
                 if (category == null)
                 {
                     _logger.LogWarning("Category with Id {CategoryId} not found", id);
-                    return NotFound($"Category with Id {id} not found.");
+                    return NotFound(new { Message = $"Category with Id {id} not found.", Code = 57 });
                 }
 
                 var categoryResponse = new CategoryResponse
@@ -107,7 +107,7 @@ namespace PersonalPodcast.Controllers
                 if (category == null)
                 {
                     _logger.LogWarning("Category with Id {CategoryId} not found", id);
-                    return NotFound($"Category with Id {id} not found.");
+                    return NotFound(new { Message = $"Category with Id {id} not found.", Code = 57 });
                 }
 
                 category.Name = request.Name;
@@ -135,7 +135,7 @@ namespace PersonalPodcast.Controllers
                 if (category == null)
                 {
                     _logger.LogWarning("Category with Id {CategoryId} not found", id);
-                    return NotFound($"Category with Id {id} not found.");
+                    return NotFound(new { Message = $"Category with Id {id} not found.", Code = 57 });
                 }
 
                 _dBContext.categories.Remove(category);

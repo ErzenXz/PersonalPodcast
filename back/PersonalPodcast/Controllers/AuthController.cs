@@ -287,14 +287,14 @@ namespace PersonalPodcast.Controllers
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "No refresh token found.", Code = 10 });
+                return Unauthorized(new { Message = "No refresh token found or refresh token has expired.", Code = 10 });
             }
 
             var user = _dBContext.Users.SingleOrDefault(u => u.RefreshToken == refreshToken);
 
             if (user == null)
             {
-                return Unauthorized(new { Message = "Invalid refresh token.", Code = 11 });
+                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 11 });
             }
 
             user.RefreshToken = null;
@@ -313,7 +313,7 @@ namespace PersonalPodcast.Controllers
         {
             if (userRequest.Email == null)
             {
-                return BadRequest(new { Message = "Email is required.", Code = 1 });
+                return BadRequest(new { Message = "Email is required.", Code = 202 });
             }
 
             if (userRequest.Email.Length < 5 || userRequest.Email.Length > 100)
@@ -358,7 +358,7 @@ namespace PersonalPodcast.Controllers
         {
             if (changePasswordRequest.Email == null || changePasswordRequest.OldPassword == null || changePasswordRequest.NewPassword == null)
             {
-                return BadRequest(new { Message = "Email, old password and new password are required.", Code = 1 });
+                return BadRequest(new { Message = "Email, old password and new password are required.", Code = 203 });
             }
 
             if (changePasswordRequest.Email.Length < 5 || changePasswordRequest.Email.Length > 100)
@@ -373,7 +373,7 @@ namespace PersonalPodcast.Controllers
 
             if (changePasswordRequest.NewPassword.Length < 8 || changePasswordRequest.NewPassword.Length > 100)
             {
-                return BadRequest(new { Message = "New password must be between 8 and 100 characters.", Code = 4 });
+                return BadRequest(new { Message = "New password must be between 8 and 100 characters.", Code = 204 });
             }
 
             // Check if user exists in database
@@ -385,7 +385,7 @@ namespace PersonalPodcast.Controllers
 
             if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, user.Password))
             {
-                return BadRequest(new { Message = "Invalid old password.", Code = 100 });
+                return BadRequest(new { Message = "Invalid password.", Code = 100 });
             }
 
             // Hash the new password
@@ -423,7 +423,7 @@ namespace PersonalPodcast.Controllers
 
             if (user == null)
             {
-                return Unauthorized(new { Message = "Invalid refresh token.", Code = 11 });
+                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 11 });
             }
 
             return Ok(new { user.FullName,user.Username, user.Email, user.Role });
