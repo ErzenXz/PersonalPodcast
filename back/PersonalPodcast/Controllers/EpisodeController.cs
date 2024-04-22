@@ -66,6 +66,7 @@ namespace PersonalPodcast.Controllers
                 {
                     _logger.LogWarning("Episode with Id {EpisodeId} not found", id);
                     return NotFound(new { Message = $"Episode with Id {id} not found.", Code = 59 });
+
                 }
                 var episodeResponse = new EpisodeResponse
                 {
