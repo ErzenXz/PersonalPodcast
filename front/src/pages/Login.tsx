@@ -39,7 +39,7 @@ function doLogin(email: string, password: string) {
    )
       .then((response) => response.json())
       .then((result) => {
-         const expiresInDays = 60 * 60 * 24 * 7;
+         //const expiresInDays = 60 * 60 * 24 * 7;
 
          switch (result.code) {
             case 8:
@@ -47,7 +47,7 @@ function doLogin(email: string, password: string) {
                localStorage.setItem("token", "true");
                localStorage.setItem("accessToken", result.accessToken);
                // Set a cookie with the refresh token
-               document.cookie = `refreshToken=${result.newRefreshToken}; max-age=${expiresInDays}`;
+               //document.cookie = `refreshToken=${result.newRefreshToken}; max-age=${expiresInDays}`;
                goHomePage();
                break;
             case 100:
