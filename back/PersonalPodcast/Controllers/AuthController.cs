@@ -85,7 +85,7 @@ namespace PersonalPodcast.Controllers
             user.LastLogin = DateTime.UtcNow;
             user.ConnectingIp = HttpContext.Connection.RemoteIpAddress.ToString();
             user.Birthdate = userRequest.Birthdate;
-            user.Role = userRequest.Role;
+            user.Role = "User";
             user.Username = userRequest.Username;
             user.FullName = userRequest.FullName;
             user.RefreshToken = refreshToken;
@@ -337,7 +337,7 @@ namespace PersonalPodcast.Controllers
                 }
 
                 // Generate new password
-                string newPassword = Convert.ToBase64String(RandomNumberGenerator.GetBytes(8));
+                string newPassword = Convert.ToBase64String(RandomNumberGenerator.GetBytes(7));
 
                 // Hash the new password
                 string newPasswordHashed = BCrypt.Net.BCrypt.HashPassword(newPassword);
