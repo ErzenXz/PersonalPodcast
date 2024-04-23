@@ -33,14 +33,47 @@ function doLogin(email: string, password: string) {
       redirect: "follow" as RequestRedirect,
    };
 
-   fetch("https://localhost:7068/auth/login", requestOptions)
+   fetch("https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/login", requestOptions)
       .then((response) => response.json())
-      .then((result) => console.log(result))
+      .then((result) => {
+         const expiresInDays = 60 * 60 * 24 * 7;
+
+         switch (result.code) {
+            case 8:
+               console.log(result);
+               localStorage.setItem("token", "true");
+               localStorage.setItem("accessToken", result.accessToken);
+               // Set a cookie with the refresh token
+               document.cookie = `refreshToken=${result.newRefreshToken}; max-age=${expiresInDays}`;
+               goHomePage();
+               break;
+            case 100:
+               alert("Invalid password");
+               break;
+            case 1:
+               alert("Email and password are required.");
+               break;
+            case 2:
+               alert("Email must be between 5 and 100 characters.");
+               break;
+            case 99:
+               alert("You need to provide a valid password in order to login.");
+               break;
+            case 105:
+               alert(
+                  "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users."
+               );
+               break;
+            case 101:
+               alert(
+                  "The email you provided is not registered in our system. Please check the email and try again."
+               );
+               break;
+            default:
+               alert("Something went wrong");
+         }
+      })
       .catch((error) => console.log("error", error));
-
-   localStorage.setItem("token", "true");
-
-   goHomePage();
    return true;
 }
 
@@ -106,6 +139,27 @@ function Login() {
          doSignup(user);
       }
    };
+
+   // Fetch the API to see if the user is logged in
+   const myHeaders = new Headers();
+   myHeaders.append("Content-Type", "application/json");
+
+   const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow" as RequestRedirect,
+   };
+
+   fetch("https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/info", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+         if (result.code !== 10 && result.code !== 11) {
+            goHomePage();
+         } else {
+            console.log("User is not logged in.");
+         }
+      })
+      .catch((error) => console.log("error", error));
 
    return (
       <div className="container loginC" style={{ backgroundImage: backGroundImg }}>
