@@ -33,7 +33,10 @@ function doLogin(email: string, password: string) {
       redirect: "follow" as RequestRedirect,
    };
 
-   fetch("https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/login", requestOptions)
+   fetch(
+      "https://cors.erzen.tk/https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/login",
+      requestOptions
+   )
       .then((response) => response.json())
       .then((result) => {
          const expiresInDays = 60 * 60 * 24 * 7;
@@ -150,7 +153,10 @@ function Login() {
       redirect: "follow" as RequestRedirect,
    };
 
-   fetch("https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/info", requestOptions)
+   fetch(
+      "https://cors.erzen.tk/https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/info",
+      requestOptions
+   )
       .then((response) => response.json())
       .then((result) => {
          if (result.code !== 10 && result.code !== 11) {
