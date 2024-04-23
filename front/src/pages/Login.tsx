@@ -33,10 +33,13 @@ function doLogin(email: string, password: string) {
       redirect: "follow" as RequestRedirect,
    };
 
-   fetch("https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/login", requestOptions)
+   fetch(
+      "https://cors.erzen.tk/https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/login",
+      requestOptions
+   )
       .then((response) => response.json())
       .then((result) => {
-         const expiresInDays = 60 * 60 * 24 * 7;
+         //const expiresInDays = 60 * 60 * 24 * 7;
 
          switch (result.code) {
             case 8:
@@ -44,7 +47,7 @@ function doLogin(email: string, password: string) {
                localStorage.setItem("token", "true");
                localStorage.setItem("accessToken", result.accessToken);
                // Set a cookie with the refresh token
-               document.cookie = `refreshToken=${result.newRefreshToken}; max-age=${expiresInDays}`;
+               //document.cookie = `refreshToken=${result.newRefreshToken}; max-age=${expiresInDays}`;
                goHomePage();
                break;
             case 100:
@@ -150,7 +153,10 @@ function Login() {
       redirect: "follow" as RequestRedirect,
    };
 
-   fetch("https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/info", requestOptions)
+   fetch(
+      "https://cors.erzen.tk/https://personal-podcasts-6cn7pfsl4a-oc.a.run.app/auth/info",
+      requestOptions
+   )
       .then((response) => response.json())
       .then((result) => {
          if (result.code !== 10 && result.code !== 11) {
