@@ -33,7 +33,7 @@ function doLogin(email: string, password: string) {
       redirect: "follow" as RequestRedirect,
    };
 
-   fetch("http://localhost:5009/auth/login", requestOptions)
+   fetch("https://localhost:7068/auth/login", requestOptions)
       .then((response) => response.json())
       .then((result) => console.log(result))
       .catch((error) => console.log("error", error));
