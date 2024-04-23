@@ -1,7 +1,8 @@
-namespace PersonalPodcast.DTO
+﻿namespace PersonalPodcast.DTO
 {
-    public class AudioAnalyticsRequest
+    public class AudioAnalyticsResponse
     {
+        public long Id { get; set; }
         public long UserId { get; set; }
         public long EpisodeId { get; set; }
         public DateTime FirstPlay { get; set; }
