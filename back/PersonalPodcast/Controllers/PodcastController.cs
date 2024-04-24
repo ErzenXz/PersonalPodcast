@@ -22,7 +22,7 @@ namespace PersonalPodcast.Controllers
             _dBContext = dBContext;
         }
         [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Create([FromBody]PodcastRequest request)
+        public async Task<IActionResult> Create(PodcastRequest request)
         {
             try
             {

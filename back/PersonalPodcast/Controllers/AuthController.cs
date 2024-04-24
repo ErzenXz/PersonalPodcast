@@ -535,7 +535,7 @@ namespace PersonalPodcast.Controllers
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7),
                 Secure = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.Lax
             };
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);

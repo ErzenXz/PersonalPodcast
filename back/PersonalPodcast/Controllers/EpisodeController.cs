@@ -24,7 +24,7 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Create([FromBody] EpisodeRequest request)
+        public async Task<IActionResult> Create(EpisodeRequest request)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace PersonalPodcast.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating episode");
-                return StatusCode(500, "An error occurred while processing the request. " + ex.Message);
+                return StatusCode(500, "An error occurred while processing the request. " + ex.InnerException?.Message);
             }
         }
 

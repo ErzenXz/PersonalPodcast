@@ -26,6 +26,7 @@ namespace PersonalPodcast.Models
         [ForeignKey("CategoryId")]
         public  Category Category { get; set; }
 
-        public Episode Episode { get; set; }
+        public ICollection<Episode> Episodes { get; set; }
+
     }
 }
