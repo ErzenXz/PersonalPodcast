@@ -1,5 +1,6 @@
 using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -81,11 +82,18 @@ builder.Services.AddDbContext<DBContext>(options =>
 });
 
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+
+// Enable middleware to get FORWARDED headers
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 
 app.UseSwagger();
 app.UseSwaggerUI();

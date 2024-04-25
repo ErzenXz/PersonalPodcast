@@ -28,7 +28,7 @@ namespace PersonalPodcast.Controllers
         {
             if (request == null)
             {
-                return BadRequest(new{ Message = "Invalid comment data.", Code = 54 });
+                return BadRequest(new{ Message = "Invalid comment data.", Code = 18 });
             }
 
 
@@ -66,13 +66,13 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetComment(int id)
+        public async Task<IActionResult> GetComment(long id)
         {
             var comment = await _dbContext.comments.FindAsync(id);
             if (comment == null)
             {
                 _logger.LogWarning($"Comment with Id {id} not found", id);
-                return NotFound();
+                return NotFound(new { Message = $"Comment with Id {id} not found.", Code = 58 });
             }
 
             var commentResponse = new CommentResponse
@@ -87,8 +87,8 @@ namespace PersonalPodcast.Controllers
             return Ok(commentResponse);
         }
 
-        [HttpGet("{episodeId}")]
-        public async Task<IActionResult> GetCommentsByEpisodeId(long episodeId, int page)
+        [HttpGet("episodes/{episodeId}")]
+        public async Task<IActionResult> GetCommentsByEpisodeId(int episodeId, int page = 1)
         {
             var comments = await _dbContext.comments
                 .Where(c => c.EpisodeId == episodeId)
@@ -108,18 +108,18 @@ namespace PersonalPodcast.Controllers
             if (comments == null || !comments.Any())
             {
                 _logger.LogWarning("No comments found for EpisodeId {EpisodeId}", episodeId);
-                return NotFound($"No comments found for EpisodeId {episodeId}.");
+                return NotFound(new {Message = $"No comments found for EpisodeId {episodeId}.", Code = 63});
             }
 
             return Ok(comments);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllComments(int page)
+        public async Task<IActionResult> GetAllComments(int page = 1)
         {
             if (page < 1)
             {
-                return BadRequest(new{ Message = "Invalid page number.", Code = 55 });
+                return BadRequest(new{ Message = "Invalid page number.", Code = 11 });
             }
 
             var comments = await _dbContext.comments
@@ -144,14 +144,14 @@ namespace PersonalPodcast.Controllers
         {
             if (request == null)
             {
-                return BadRequest(new{ Message = "Invalid comment data.",Code = 56 });
+                return BadRequest(new{ Message = "Invalid comment data.",Code = 17 });
             }
 
             DateTime maxAllowedTimeBefore = DateTime.UtcNow.AddMinutes(-10);
 
             if (request.Date > DateTime.UtcNow || request.Date < maxAllowedTimeBefore)
             {
-                return BadRequest(new { Message = "Invalid date.", Code = 61 });
+                return BadRequest(new { Message = "Invalid date.", Code = 10 });
             }
 
             var comment = await _dbContext.comments.FindAsync(id);
@@ -172,7 +172,7 @@ namespace PersonalPodcast.Controllers
                 _dbContext.comments.Update(comment);
                 await _dbContext.SaveChangesAsync();
                 _logger.LogInformation("Comment with Id {CommentId} updated successfully", id);
-                return NoContent(); 
+                return Ok(new { Message = "Comment updated successfully.", Code = 91 }); 
             }
             catch (Exception ex)
             {
@@ -197,7 +197,7 @@ namespace PersonalPodcast.Controllers
                 _dbContext.comments.Remove(comment);
                 await _dbContext.SaveChangesAsync();
                 _logger.LogInformation($"Comment with Id {id} deleted successfully", id);
-                return NoContent();
+                return Ok(new { Message = " Comment deleted successfully.", Code = 92 });
             }
             catch (Exception ex)
             {

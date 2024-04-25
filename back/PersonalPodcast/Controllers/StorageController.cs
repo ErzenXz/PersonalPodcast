@@ -29,7 +29,7 @@ namespace PersonalPodcast.Controllers
             try
             {
                 if (file == null || file.Length == 0)
-                    return BadRequest(new { Message = "No file provided.",Code = 7 });
+                    return BadRequest(new { Message = "No file provided.",Code = 55 });
 
                 // Check if the file is img, audio or video if else deny
 
@@ -38,27 +38,30 @@ namespace PersonalPodcast.Controllers
                     // Do nothing
                 } else
                 {
-                    return BadRequest( new { Message = "File type not supported. Please upload an image, audio or video file.", Code = 5 });
+                    return BadRequest( new { Message = "File type not supported. Please upload an image, audio or video file.", Code = 57 });
                 }
 
                 // Check if the file is too large
 
                 if (file.Length > 1073741824)
                 {
-                    return BadRequest(new { Message = "File is too large. Max file size is 1GB", Code = 6 });
+                    return BadRequest(new { Message = "File is too large. Max file size is 1GB", Code = 56 });
                 }
 
                 // Generate a unique key for the S3 object (using Guid)
+                var fileExtension = Path.GetExtension(file.FileName);
                 var s3ObjectKey = Guid.NewGuid().ToString();
+
+                var s3ObjectKeyWithExtension = $"{s3ObjectKey}{fileExtension}";
 
                 using (var stream = file.OpenReadStream())
                 {
                     var transferUtility = new TransferUtility(_s3Client);
-                    await transferUtility.UploadAsync(stream, BucketName, s3ObjectKey);
+                    await transferUtility.UploadAsync(stream, BucketName, s3ObjectKeyWithExtension);
                 }
 
-                var s3ObjectUrl = $"https://{BucketName}.s3.amazonaws.com/{s3ObjectKey}";
-                return Ok(new { Code = 7, Message = "File uploaded successfully!", S3ObjectUrl = s3ObjectUrl });
+                var s3ObjectUrl = $"https://{BucketName}.s3.amazonaws.com/{s3ObjectKeyWithExtension}";
+                return Ok(new { Code = 60, Message = "File uploaded successfully!", S3ObjectUrl = s3ObjectUrl });
             }
             catch (Exception ex)
             {
@@ -73,11 +76,11 @@ namespace PersonalPodcast.Controllers
             try
             {
                 if (string.IsNullOrEmpty(key))
-                    return BadRequest(new { Message = "No key provided.", Code = 8 });
+                    return BadRequest(new { Message = "No key provided.", Code = 58 });
 
                 await _s3Client.DeleteObjectAsync(BucketName, key);
 
-                return Ok(new { Code = 8, Message = "File deleted successfully!" });
+                return Ok(new { Code = 59, Message = "File deleted successfully!" });
             }
             catch (Exception ex)
             {

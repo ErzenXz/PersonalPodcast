@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentAssertions.Equivalency;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
@@ -30,12 +31,12 @@ namespace PersonalPodcast.Controllers
 
                 if (request == null)
                 {
-                    return BadRequest(new { Message = "Invalid rating data.", Code = 54 });
+                    return BadRequest(new { Message = "Invalid rating data.", Code = 13 });
                 }
 
                 if (request.RatingValue < 1 || request.RatingValue > 5)
                 {
-                    return BadRequest(new { Message = "Rating value must be between 1 and 5.", Code = 55 });
+                    return BadRequest(new { Message = "Rating value must be between 1 and 5.", Code = 14 });
                 }
 
                 if(await _dBContext.ratings.AnyAsync(r => r.UserId == request.UserId && r.EpisodeId == request.EpisodeId))
@@ -110,7 +111,7 @@ namespace PersonalPodcast.Controllers
             if (rating == null)
             {
                 _logger.LogWarning("Rating with Id {RatingId} not found", id);
-                return NotFound();
+                return NotFound(new { Message = $"Rating with Id {id} not found.", Code = 62 });
             }
 
             var ratingResponse = new RatingResponse
@@ -126,12 +127,12 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRatings(int page)
+        public async Task<IActionResult> GetAllRatings(int page = 1)
         {
 
             if (page < 1)
             {
-                return BadRequest(new { Message = "Invalid page number.", Code = 55 });
+                return BadRequest(new { Message = "Invalid page number.", Code = 11 });
             }
 
             var ratings = await _dBContext.ratings.Skip((page - 1) * 10).Take(10).Select(r => new RatingResponse                
@@ -181,12 +182,12 @@ namespace PersonalPodcast.Controllers
                 if (rating == null)
                 {
                     _logger.LogWarning("Rating with Id {RatingId} not found", id);
-                    return NotFound($"Rating with Id {id} not found.");
+                    return NotFound(new { Message = $"Rating with Id {id} not found.", Code = 62 });
                 }
 
                 if (request.RatingValue < 1 || request.RatingValue > 5)
                 {
-                    return BadRequest(new { Message = "Rating value must be between 1 and 5.", Code = 55 });
+                    return BadRequest(new { Message = "Rating value must be between 1 and 5.", Code = 14 });
                 }
 
 
@@ -200,7 +201,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Rating with Id {RatingId} updated successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = "Rating updated successfully.", Code = 85 });
             }
             catch (Exception ex)
             {
@@ -219,7 +220,7 @@ namespace PersonalPodcast.Controllers
                 if (rating == null)
                 {
                     _logger.LogWarning("Rating with Id {RatingId} not found", id);
-                    return NotFound($"Rating with Id {id} not found.");
+                    return NotFound(new { Message = $"Rating with Id {id} not found.", Code = 62 });
                 }
 
                 _dBContext.ratings.Remove(rating);
@@ -227,7 +228,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Rating with Id {RatingId} deleted successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = "Rating deleted successfully.", Code = 86 });
             }
             catch (Exception ex)
             {
