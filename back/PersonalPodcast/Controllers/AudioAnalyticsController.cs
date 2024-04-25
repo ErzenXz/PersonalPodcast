@@ -39,19 +39,19 @@ namespace PersonalPodcast.Controllers
                 if (audioAnalytics.FirstPlay > audioAnalytics.LastPlay)
                 {
                     _logger.LogWarning("First play date cannot be greater than last play date.");
-                    return BadRequest("First play date cannot be greater than last play date.");
+                    return BadRequest(new {Message= "First play date cannot be greater than last play date.", Code =20});
                 }
 
                 if (audioAnalytics.LastPlay > audioAnalytics.FirstPlay.AddSeconds(audioAnalytics.Length))
                 {
                     _logger.LogWarning("Last play date cannot be greater than the length of the audio.");
-                    return BadRequest("Last play date cannot be greater than the length of the audio.");
+                    return BadRequest(new {Message= "Last play date cannot be greater than the length of the audio." , Code = 21});
                 }
 
                 if (audioAnalytics.Length <= 0)
                 {
                     _logger.LogWarning("Length of the audio must be greater than 0.");
-                    return BadRequest("Length of the audio must be greater than 0.");
+                    return BadRequest(new {Message= "Length of the audio must be greater than 0." ,Code=22});
                 }
 
                 // If the audio analytics already exists, update the existing record
@@ -67,7 +67,7 @@ namespace PersonalPodcast.Controllers
 
                     _logger.LogInformation("Audio analytics updated successfully: {AudioAnalyticsId}", existingAudioAnalytics.Id);
 
-                    return NoContent();
+                    return Ok(new { Message = "Audio Analytics updated successfully.", Code = 95 });
                 }
 
                 _dBContext.audioAnalytics.Add(audioAnalytics);
@@ -104,7 +104,7 @@ namespace PersonalPodcast.Controllers
                 if (audioAnalytics == null)
                 {
                     _logger.LogWarning("Audio analytics with Id {AudioAnalyticsId} not found", id);
-                    return NotFound();
+                    return NotFound(new {Message= $"Audio analytics with Id {id} not found", Code= 64 });
                 }
 
                 var audioAnalyticsResponse = new AudioAnalyticsResponse
@@ -126,7 +126,7 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet, Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> GetAllAudioAnalytics(int page)
+        public async Task<IActionResult> GetAllAudioAnalytics(int page = 1)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace PersonalPodcast.Controllers
                 if (page < 0)
                 {
                     _logger.LogWarning("Page number cannot be less than 0.");
-                    return BadRequest("Page number cannot be less than 0.");
+                    return BadRequest(new { Message = "Invalid page number.", Code = 11 });
                 }
 
                 var audioAnalyticsList = await _dBContext.audioAnalytics.Skip(page * 10).Take(10).
@@ -165,7 +165,7 @@ namespace PersonalPodcast.Controllers
                 if (audioAnalytics == null)
                 {
                     _logger.LogWarning("Audio analytics with Id {AudioAnalyticsId} not found", id);
-                    return NotFound($"Audio analytics with Id {id} not found.");
+                    return NotFound(new { Message = $"Audio analytics with Id {id} not found", Code = 64 });
                 }
 
                 audioAnalytics.UserId = request.UserId;
@@ -179,7 +179,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Audio analytics with Id {AudioAnalyticsId} updated successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = "Audio Analytics updated successfully.", Code = 95 });
             }
             catch (Exception ex)
             {
@@ -197,7 +197,7 @@ namespace PersonalPodcast.Controllers
                 if (audioAnalytics == null)
                 {
                     _logger.LogWarning("Audio analytics with Id {AudioAnalyticsId} not found", id);
-                    return NotFound($"Audio analytics with Id {id} not found.");
+                    return NotFound(new { Message = $"Audio analytics with Id {id} not found", Code = 64 });
                 }
 
                 _dBContext.audioAnalytics.Remove(audioAnalytics);
@@ -205,7 +205,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Audio analytics with Id {AudioAnalyticsId} deleted successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = " Audio Analytics deleted successfully.", Code = 96 });
             }
             catch (Exception ex)
             {
@@ -217,7 +217,7 @@ namespace PersonalPodcast.Controllers
         // Get recomented episodes based on some user watch time and tags in a episode
 
         [HttpGet("recommendedEpisodes")]
-        public async Task<IActionResult> GetRecommendedEpisodes(int page)
+        public async Task<IActionResult> GetRecommendedEpisodes(int page = 1)
         {
             try
             {
@@ -244,8 +244,16 @@ namespace PersonalPodcast.Controllers
 
                 if (!userAudioAnalytics.Any())
                 {
-                    _logger.LogWarning("No audio analytics found for user with Id {UserId}", user.Id);
-                    return NotFound($"No audio analytics found for user with Id {user.Id}");
+                   // Return a paginated list of random episodes
+                        var randomEpisodes = await _dBContext.Episodes
+                            .OrderBy(e => Guid.NewGuid()) // Shuffle the episodes
+                            .Skip((page - 1) * 10)
+                            .Take(10)
+                            .ToListAsync();
+
+                        _logger.LogWarning("No audio analytics found for user with Id {UserId}", user.Id);
+                        return Ok(randomEpisodes);
+                    //return NotFound(new { Message = $"No audio analytics found for user with Id {user.Id}", Code = 65 });
                 }
 
                 // Calculate average watch time per tag
@@ -257,8 +265,18 @@ namespace PersonalPodcast.Controllers
 
                 if (!tagWatchTimes.Any())
                 {
-                    _logger.LogWarning("No tags with watch time found for user with Id {UserId}", user.Id);
-                    return NotFound($"No tags with watch time found for user with Id {user.Id}");
+
+                        // Return a paginated list of random episodes
+                        var randomEpisodes = await _dBContext.Episodes
+                            .OrderBy(e => Guid.NewGuid()) // Shuffle the episodes
+                            .Skip((page - 1) * 10)
+                            .Take(10)
+                            .ToListAsync();
+
+                        _logger.LogWarning("No tags with watch time found for user with Id {UserId}", user.Id);
+                        return Ok(randomEpisodes);
+
+                    //return NotFound(new { Message = $"No tags with watch time found for user with Id {user.Id}", Code = 66 });
                 }
 
                 // Get top tags based on watch time

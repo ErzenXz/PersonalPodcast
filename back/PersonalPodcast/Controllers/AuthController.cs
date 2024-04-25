@@ -34,32 +34,32 @@ namespace PersonalPodcast.Controllers
         {
             if (userRequest.Email == null || userRequest.Password == null)
             {
-                return BadRequest(new { Message = "Email and password are required.", Code = 1 });
+                return BadRequest(new { Message = "Email and password are required.", Code = 3 });
             }
 
             if (userRequest.Email.Length < 5 || userRequest.Email.Length > 100)
             {
-                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 2 });
+                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 4 });
             }
 
             if (userRequest.Password.Length < 8 || userRequest.Password.Length > 100)
             {
-                return BadRequest(new { Message = "Password must be between 8 and 100 characters.", Code = 3 });
+                return BadRequest(new { Message = "Password must be between 8 and 100 characters.", Code = 5 });
             }
 
             if (_dBContext.Users.Any(u => u.Email == userRequest.Email))
             {
-                return BadRequest(new { Message = "Email already in use.", Code = 102 });
+                return BadRequest(new { Message = "Email already in use.", Code = 7 });
             }
 
             if (userRequest.Birthdate == null)
             {
-                return BadRequest(new { Message = "Birthdate is required.", Code = 103 });
+                return BadRequest(new { Message = "Birthdate is required.", Code = 6 });
             }
 
             if(_dBContext.Users.Any(u => u.Username == userRequest.Username))
             {
-                return BadRequest(new { Message = "Username already in use.", Code = 104 });
+                return BadRequest(new { Message = "Username already in use.", Code = 8 });
             }
 
             string passwordHashed = BCrypt.Net.BCrypt.HashPassword(userRequest.Password);
@@ -68,13 +68,13 @@ namespace PersonalPodcast.Controllers
             var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
             // Check if the user ip is blocked
-            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            var ip = GetUserIp();
             var ipBlock = _dBContext.ipMitigations.Where(i => i.IpAddress == ip).OrderByDescending(i => i.BlockedUntil).FirstOrDefault();
             if (ipBlock != null)
             {
                    if (ipBlock.BlockedUntil > DateTime.UtcNow)
                 {
-                    return Unauthorized(new { Message = "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users.", Code = 105 });
+                    return Unauthorized(new { Message = "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users.", Code = 44 });
                 }
             }
 
@@ -83,7 +83,7 @@ namespace PersonalPodcast.Controllers
             user.Password = passwordHashed;
             user.FirstLogin = DateTime.UtcNow;
             user.LastLogin = DateTime.UtcNow;
-            user.ConnectingIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            user.ConnectingIp = GetUserIp();
             user.Birthdate = userRequest.Birthdate;
             user.Role = "User";
             user.Username = userRequest.Username;
@@ -96,7 +96,7 @@ namespace PersonalPodcast.Controllers
             _dBContext.Users.Add(user);
             await _dBContext.SaveChangesAsync();
 
-            return Ok(new { Message = "User registered successfully!", Code = 4 });
+            return Ok(new { Message = "User registered successfully!", Code = 43 });
         }
 
         [HttpPost("login")]
@@ -104,29 +104,29 @@ namespace PersonalPodcast.Controllers
         {
             if (userRequest.Email == null || userRequest.Password == null)
             {
-                return BadRequest(new { Message = "Email and password are required.", Code = 1 });
+                return BadRequest(new { Message = "Email and password are required.", Code = 3 });
             }
 
             if (userRequest.Email.Length < 5 || userRequest.Email.Length > 100)
             {
-                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 2 });
+                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 4 });
             }
 
             if (userRequest.Password.Length < 8 || userRequest.Password.Length > 100)
             {
-                return BadRequest(new { Message = "Access Denied: You need to provide a password in order to login.", Code = 99 });
+                return BadRequest(new { Message = "Pasword is required.", Code = 2 });
             }
 
 
             // Check if the user ip is blocked
-            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            var ip = GetUserIp();
             var ipBlock = _dBContext.ipMitigations.Where(i => i.IpAddress == ip).OrderByDescending(i => i.BlockedUntil).FirstOrDefault();
 
             if (ipBlock != null)
             {
                    if (ipBlock.BlockedUntil > DateTime.UtcNow)
                 {
-                    return Unauthorized(new { Message = "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users.", Code = 105 });
+                    return Unauthorized(new { Message = "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users.", Code = 44 });
                 }
             }
 
@@ -134,7 +134,7 @@ namespace PersonalPodcast.Controllers
             var user = _dBContext.Users.FirstOrDefault(u => u.Email == userRequest.Email);
             if (user == null)
             {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
+                return BadRequest(new { Message = "User not found.", Code = 36 });
             }
 
 
@@ -178,7 +178,7 @@ namespace PersonalPodcast.Controllers
 
 
 
-                        return Unauthorized(new { Message = "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users.", Code = 105 });
+                        return Unauthorized(new { Message = "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users.", Code = 44 });
                     }
 
                 }
@@ -193,7 +193,7 @@ namespace PersonalPodcast.Controllers
                     await _dBContext.SaveChangesAsync();
                 }
 
-                return BadRequest(new { Message = "Invalid password.", Code = 100 });
+                return BadRequest(new { Message = "Invalid password.", Code = 37 });
             }
 
 
@@ -220,7 +220,7 @@ namespace PersonalPodcast.Controllers
                 user.LastLogin = DateTime.UtcNow;
 
                 var oldConIP = user.ConnectingIp;
-                user.ConnectingIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                user.ConnectingIp = GetUserIp();
 
                 _dBContext.Users.Update(user);
                 await _dBContext.SaveChangesAsync();
@@ -228,7 +228,7 @@ namespace PersonalPodcast.Controllers
 
                 SetCookies(newRefreshToken);
 
-                if(oldConIP != HttpContext.Connection.RemoteIpAddress.ToString())
+                if(oldConIP != GetUserIp())
                 {
                     SecureMail.SendEmail("noreply@erzen.tk", user.Email, "New Login from New IP", @"<p style=""font-size: 16px; color: #FF0000; font-weight: bold;"">⚠️ WARNING: SECURITY ALERT!</p>
 <p style=""font-size: 14px;"">Dear User,</p>
@@ -242,11 +242,11 @@ namespace PersonalPodcast.Controllers
                 }
 
 
-                return Ok(new { Message = "User logged in successfully!", Code = 8, AccessToken = accessToken, newRefreshToken });
+                return Ok(new { Message = "User logged in successfully!", Code = 38, AccessToken = accessToken, newRefreshToken });
             }
             else
             {
-                return BadRequest(new { Message = "Error creating access token.", Code = 9 });
+                return BadRequest(new { Message = "Error creating access token.", Code = 39 });
             }
 
         }
@@ -259,7 +259,7 @@ namespace PersonalPodcast.Controllers
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "No refresh token found.", Code = 10 });
+                return Unauthorized(new { Message = "No refresh token found.", Code = 40 });
             }
             
 
@@ -267,7 +267,7 @@ namespace PersonalPodcast.Controllers
 
             if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
-                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 11 });
+                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 41 });
             }
 
             // Generate new access token
@@ -287,7 +287,9 @@ namespace PersonalPodcast.Controllers
 
             return Ok(new
             {
-                AccessToken = newAccessToken
+                AccessToken = newAccessToken,
+                Code = 45,
+                Message = "Token refreshed successfully!"
             });
         }
 
@@ -298,14 +300,14 @@ namespace PersonalPodcast.Controllers
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "No refresh token found or refresh token has expired.", Code = 10 });
+                return Unauthorized(new { Message = "No refresh token found or refresh token has expired.", Code = 40 });
             }
 
             var user = _dBContext.Users.SingleOrDefault(u => u.RefreshToken == refreshToken);
 
             if (user == null)
             {
-                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 11 });
+                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 41 });
             }
 
             user.RefreshToken = null;
@@ -316,7 +318,7 @@ namespace PersonalPodcast.Controllers
 
             SetCookies("");
 
-            return Ok(new { Message = "User logged out successfully!", Code = 12 });
+            return Ok(new { Message = "User logged out successfully!", Code = 42 });
         }
 
         [HttpPost("forgot-password")]
@@ -328,12 +330,12 @@ namespace PersonalPodcast.Controllers
                 var resetEmail = _dBContext.resetEmails.FirstOrDefault(r => r.Email == emailRq && r.Code == code.ToString());
                 if (resetEmail == null)
                 {
-                    return BadRequest(new { Message = "Invalid code.", Code = 201 });
+                    return BadRequest(new { Message = "Invalid code.", Code = 46 });
                 }
 
                 if (resetEmail.ValidUntil < DateTime.UtcNow)
                 {
-                    return BadRequest(new { Message = "Code has expired.", Code = 202 });
+                    return BadRequest(new { Message = "Code has expired.", Code = 47 });
                 }
 
                 // Generate new password
@@ -346,7 +348,7 @@ namespace PersonalPodcast.Controllers
 
                 if (user2 == null)
                 {
-                    return BadRequest(new { Message = "User was not found.", Code = 101 });
+                    return BadRequest(new { Message = "User was not found.", Code = 36 });
                 }
 
                 user2.Password = newPasswordHashed;
@@ -358,30 +360,30 @@ namespace PersonalPodcast.Controllers
 
                 if (!response2)
                 {
-                    return BadRequest(new { Message = "Error sending email. ", Code = 14 });
+                    return BadRequest(new { Message = "Error sending email. ", Code = 66 });
                 }
 
 
-                return Ok(new { Message = $"Here is your new generated password: {newPassword}, It was also send via email.", Code = 13});
+                return Ok(new { Message = $"Here is your new generated password: {newPassword}, It was also send via email.", Code = 69});
 
             } else
             {
 
             if (userRequest.Email == null)
             {
-                return BadRequest(new { Message = "Email is required.", Code = 202 });
+                return BadRequest(new { Message = "Email is required.", Code = 1 });
             }
 
             if (userRequest.Email.Length < 5 || userRequest.Email.Length > 100)
             {
-                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 2 });
+                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 3 });
             }
 
             // Check if user exists in database
             var user = _dBContext.Users.FirstOrDefault(u => u.Email == userRequest.Email);
             if (user == null)
             {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
+                return BadRequest(new { Message = "User not found.", Code = 36 });
             }
 
             // Generate new code
@@ -411,11 +413,11 @@ namespace PersonalPodcast.Controllers
 
             if (!response)
             {
-                return BadRequest(new { Message = "Error sending email. ", Code = 14 });
+                return BadRequest(new { Message = "Error sending email. ", Code = 66 });
             }
 
 
-            return Ok(new { Message = "A code was send to your email. ", Code = 13 });
+            return Ok(new { Message = "A code was send to your email. ", Code = 68 });
             }
 
         }
@@ -430,29 +432,29 @@ namespace PersonalPodcast.Controllers
 
             if (changePasswordRequest.Email.Length < 5 || changePasswordRequest.Email.Length > 100)
             {
-                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 2 });
+                return BadRequest(new { Message = "Email must be between 5 and 100 characters.", Code = 4 });
             }
 
             if (changePasswordRequest.OldPassword.Length < 8 || changePasswordRequest.OldPassword.Length > 100)
             {
-                return BadRequest(new { Message = "Old password must be between 8 and 100 characters.", Code = 3 });
+                return BadRequest(new { Message = "Old password must be between 8 and 100 characters.", Code = 5 });
             }
 
             if (changePasswordRequest.NewPassword.Length < 8 || changePasswordRequest.NewPassword.Length > 100)
             {
-                return BadRequest(new { Message = "New password must be between 8 and 100 characters.", Code = 204 });
+                return BadRequest(new { Message = "New password must be between 8 and 100 characters.", Code = 5 });
             }
 
             // Check if user exists in database
             var user = _dBContext.Users.FirstOrDefault(u => u.Email == changePasswordRequest.Email);
             if (user == null)
             {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
+                return BadRequest(new { Message = "User not found.", Code = 36 });
             }
 
             if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, user.Password))
             {
-                return BadRequest(new { Message = "Invalid password.", Code = 100 });
+                return BadRequest(new { Message = "Invalid password.", Code = 37 });
             }
 
             // Hash the new password
@@ -472,7 +474,7 @@ namespace PersonalPodcast.Controllers
 
             SetCookies(refreshToken);
 
-            return Ok(new { Message = "Password changed successfully!", Code = 15 });
+            return Ok(new { Message = "Password changed successfully!", Code = 78 });
         }
 
 
@@ -483,14 +485,14 @@ namespace PersonalPodcast.Controllers
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "No refresh token found.", Code = 10 });
+                return Unauthorized(new { Message = "No refresh token found.", Code = 40 });
             }
 
             var user = _dBContext.Users.SingleOrDefault(u => u.RefreshToken == refreshToken);
 
             if (user == null)
             {
-                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 11 });
+                return Unauthorized(new { Message = "Invalid refresh token or refresh token has expired.", Code = 41 });
             }
 
             return Ok(new { user.FullName,user.Username, user.Email, user.Role,user.Id });
@@ -530,16 +532,49 @@ namespace PersonalPodcast.Controllers
 
         private void SetCookies(string refreshToken)
         {
-            var cookieOptions = new CookieOptions
+            // Set cookie for .erzen.tk
+            var cookieOptionsTk = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7),
                 Secure = true,
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None,
+                Domain = ".erzen.tk"
             };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptionsTk);
 
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+            // Set cookie for .erzen.xyz
+            var cookieOptionsXyz = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7),
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Domain = ".erzen.xyz"
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptionsXyz);
         }
+
+        [NonAction]
+        public string GetUserIp()
+        {
+            // Get the value from the X-Forwarded-For header
+            var forwardedHeader = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+
+            // Check if the header contains multiple IP addresses
+            if (!string.IsNullOrEmpty(forwardedHeader))
+            {
+                // Split the header value by comma to get a list of IP addresses
+                var ips = forwardedHeader.Split(',');
+
+                // Return the first IP address which is the client's original IP
+                return ips.FirstOrDefault();
+            }
+
+            // If there is no X-Forwarded-For header, fall back to the RemoteIpAddress
+            return HttpContext.Connection.RemoteIpAddress.ToString();
+        }
+
 
     }
 
