@@ -95,8 +95,6 @@ function checkIfValidDescription(description: string): string {
    return description;
 }
 
-let goToEpisode = (id: number) => {};
-
 // Function to add the play time of the episode to the database
 async function addPlayTimeToDatabase(episodeId: number, playTime: number) {
    // Replace `API_ENDPOINT` with the actual endpoint URL
@@ -176,7 +174,7 @@ function Podcast() {
       }
    }, [params.podcastId]);
 
-   goToEpisode = (id: number) => navigate("/episode/" + id);
+   const goToEpisode = (id: number) => navigate("/episode/" + id);
 
    return (
       <>

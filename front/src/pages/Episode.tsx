@@ -120,7 +120,7 @@ function Episode() {
 
    const [loggedIn, setLoggedIn] = useState(false);
    const [episode, setEpisode] = useState<Episode | null>(null);
-   const [playTime, setPlayTime] = useState(0);
+   //const [playTime, setPlayTime] = useState(0);
    const [loading, setLoading] = useState(true);
    const [loadingComments, setLoadingComments] = useState(true);
    const [comments, setComments] = useState<Comment[]>([]);
