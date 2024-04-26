@@ -1,0 +1,123 @@
+body {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   background-color: #272a33;
+}
+
+.main {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   font-family: "Rubik", sans-serif;
+   color: #ebecf0;
+   min-height: 80vh;
+
+   h1 {
+      margin-top: 100px;
+      font-size: 2.5em;
+   }
+}
+
+.podcasts {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 20px;
+   padding: 20px;
+   margin-top: 50px;
+}
+
+.pagination {
+   display: flex;
+   justify-content: center;
+   gap: 10px;
+   margin-top: 20px;
+   margin-bottom: 100px;
+
+   button {
+      padding: 10px 20px;
+      background-color: #414755;
+      border: none;
+      border-radius: 5px;
+      color: #ebecf0;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+         background-color: #525865;
+      }
+
+      &:active {
+         transform: scale(0.98);
+      }
+   }
+}
+
+.loading {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 2em;
+   margin-block: 30px;
+}
+
+.skeleton-podcast {
+   width: 300px;
+   height: 300px;
+   display: flex;
+   flex-direction: column;
+   background-color: #292c35;
+   border-radius: 10px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   border: 0.7px solid #414755;
+   overflow: hidden;
+   transition: all 0.3s;
+   cursor: pointer;
+   text-decoration: none;
+   color: #ebecf0;
+   user-select: none;
+
+   &:hover {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+   }
+
+   .image {
+      position: relative;
+      overflow: hidden;
+
+      img {
+         width: 100%;
+         height: 200px;
+         object-fit: cover;
+         pointer-events: none;
+      }
+   }
+
+   .info {
+      padding: 20px;
+
+      .title {
+         font-size: 1.2em;
+         margin-bottom: 10px;
+      }
+
+      .description {
+         font-size: 0.9em;
+         margin-bottom: 10px;
+      }
+
+      .date {
+         font-size: 0.8em;
+         color: #a5a5a5;
+      }
+   }
+}
+
+.skeleton-podcast:hover {
+   transform: translateY(-5px);
+}
+
+.skeleton-podcast:active {
+   transform: scale(0.98);
+}

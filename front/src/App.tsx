@@ -1,15 +1,24 @@
 import Homepage from "./pages/Homepage";
 import Navigation from "./components/Navigation";
+import { useEffect, useState } from "react";
+import check_if_logged_in from "./services/is_logged";
+import "./index.css";
 
 function App() {
-   const loggedInValue = Boolean(localStorage.getItem("token"));
+   const [loggedIn, setLoggedIn] = useState(false);
+
+   useEffect(() => {
+      check_if_logged_in().then((value) => {
+         setLoggedIn(value);
+      });
+   }, []);
 
    return (
       <>
-         {loggedInValue == true ? (
-            <Navigation title="Podcast App" loggedIn={true} />
+         {loggedIn == true ? (
+            <Navigation title="Mergim Canhasi" loggedIn={true} />
          ) : (
-            <Navigation title="Podcast App" />
+            <Navigation title="Mergim Canhasi" />
          )}
          <Homepage />
       </>
