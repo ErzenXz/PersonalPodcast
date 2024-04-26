@@ -7,8 +7,6 @@ interface PodcastCardProps {
    loading?: boolean;
 }
 
-let goToPodcast = (id: number) => {};
-
 const PodcastCard: React.FC<PodcastCardProps> = ({
    podcast,
    loading = false,
@@ -33,7 +31,7 @@ const PodcastCard: React.FC<PodcastCardProps> = ({
       );
    }
 
-   goToPodcast = (id: number) => navigate("/podcast/" + id);
+   const goToPodcast = (id: number) => navigate("/podcast/" + id);
 
    return (
       <div className="podcast-card" onClick={() => goToPodcast(podcast.id)}>
