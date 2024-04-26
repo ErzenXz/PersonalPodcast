@@ -5,6 +5,7 @@ using PersonalPodcast.Data;
 using PersonalPodcast.Models;
 using PersonalPodcast.Models.Security;
 using System.Data;
+using System.Runtime.InteropServices;
 
 namespace PersonalPodcast.Controllers
 {
@@ -48,7 +49,7 @@ namespace PersonalPodcast.Controllers
 
                 if (admin == null)
                 {
-                    return NotFound();
+                    return NotFound(new {Code= 61, Message = $"Admin with Id {id} not found."});
                 }
 
                 admin.Role = "User";
@@ -56,7 +57,7 @@ namespace PersonalPodcast.Controllers
                 _dBContext.Users.Update(admin);
                 await _dBContext.SaveChangesAsync();
 
-                return NoContent();
+                return Ok(new {Code= 401, Message = $"Admin with Id {id} was demoted succesfuly!"});
             }
             catch (Exception ex)
             {
@@ -74,7 +75,7 @@ namespace PersonalPodcast.Controllers
                 await _dBContext.Users.AddAsync(user);
                 await _dBContext.SaveChangesAsync();
 
-                return Ok("Admin created successfully");
+                return Ok(new {Code=402, Message= "Admin created successfully" });
             }
             catch (Exception ex)
             {
@@ -110,7 +111,7 @@ namespace PersonalPodcast.Controllers
 
                 if (userToUpdate == null)
                 {
-                    return NotFound();
+                    return NotFound(new {Code = 36, Message = "User not found." });
                 }
 
                 userToUpdate.Email = user.Email;
@@ -130,13 +131,13 @@ namespace PersonalPodcast.Controllers
         // Path ipMitigation
 
         [HttpGet("security/blocked", Name = "security/blocked")]
-        public async Task<IActionResult> GetIpMitigations(int page)
+        public async Task<IActionResult> GetIpMitigations(int page = 1)
         {
             try
             {
                 if (page < 0)
                 {
-                    return BadRequest();
+                    return BadRequest(new { Message = "Invalid page number.", Code = 11 });
                 }
 
                 var ipMitigations = await _dBContext.ipMitigations.Skip(page * 10).Take(10).ToListAsync();
@@ -159,7 +160,7 @@ namespace PersonalPodcast.Controllers
 
                 if (ipMitigation == null)
                 {
-                    return NotFound();
+                    return NotFound(new {Code=403, Message="No IP's are currently blocked"});
                 }
 
                 return Ok(ipMitigation);
@@ -180,7 +181,7 @@ namespace PersonalPodcast.Controllers
 
                 if (ipMitigationToUpdate == null)
                 {
-                    return NotFound();
+                    return NotFound(new { Code = 404, Message = "IP not found." });
                 }
 
                 ipMitigationToUpdate.BlockedUntil = ipMitigation.BlockedUntil;
@@ -205,13 +206,13 @@ namespace PersonalPodcast.Controllers
 
                 if (ipMitigation == null)
                 {
-                    return NotFound();
+                    return NotFound(new { Code = 404, Message = "IP not found." });
                 }
 
                 _dBContext.ipMitigations.Remove(ipMitigation);
                 await _dBContext.SaveChangesAsync();
 
-                return NoContent();
+                return Ok(new { Code = 405, Message = "IP not unblocked succesfuly." });
             }
             catch (Exception ex)
             {
@@ -237,6 +238,35 @@ namespace PersonalPodcast.Controllers
             }
         }
 
+
+        [HttpGet("status"), AllowAnonymous]
+        public IActionResult GetStatus()
+        {
+
+            // Get info about the server running the API
+
+            var serverInfo = new
+            {
+                ServerName = Environment.MachineName,
+                ServerTime = DateTime.Now,
+                ServerTimeZone = TimeZoneInfo.Local.DisplayName,
+                ServerOS = Environment.OSVersion.VersionString,
+                ServerFramework = RuntimeInformation.FrameworkDescription,
+                ServerRuntime = RuntimeInformation.OSDescription,
+                ServerArchitecture = RuntimeInformation.OSArchitecture,
+                ServerProcessors = Environment.ProcessorCount,
+                ServerMemory = Environment.WorkingSet,
+                ServerVersion = Environment.Version
+            };
+
+            return Ok(new
+            {
+                status = "ok",
+                version = "1.1.2",
+                server = serverInfo
+            });
+
+        }
 
 
     }

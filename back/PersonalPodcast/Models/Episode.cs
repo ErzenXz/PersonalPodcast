@@ -22,8 +22,8 @@ namespace PersonalPodcast.Models
 
         [ForeignKey("PublisherId")]
         public User User { get; set; }
-        public Rating Rating { get; set; }
-        public Comment Comment { get; set; }
-        public AudioAnalytics AudioAnalytics { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<AudioAnalytics> AudioAnalytics { get; set; }
     }
 }

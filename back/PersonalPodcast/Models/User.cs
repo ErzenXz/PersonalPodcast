@@ -20,12 +20,15 @@ namespace PersonalPodcast.Models
         public int TokenVersion { get; set; }
 
 
+        // One-to-many
+        public ICollection<Podcast> Podcasts { get; set; }
+        public ICollection<Episode> Episodes { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<AudioAnalytics> AudioAnalytics { get; set; }
+
+        // One-to-one
         public Admin Admin { get; set; }
-        public Podcast Podcast { get; set; }
-        public Episode Episode { get; set; }
-        public Rating Rating { get; set; }
-        public Comment Comment { get; set; }
-        public AudioAnalytics AudioAnalytics { get; set; }
 
     }
 }
