@@ -101,8 +101,8 @@
    flex-direction: column;
    background-color: #272a33;
    font-family: "Rubik", sans-serif;
-   padding-top: 25px;
-   padding-bottom: 75px;
+   padding-top: 45px;
+   padding-bottom: 45px;
    h2 {
       font-size: 2em;
       margin-bottom: 80px;
@@ -165,11 +165,16 @@
    }
 }
 
+.episode:hover {
+   background-color: #414755;
+   cursor: pointer;
+}
+
 .viewMoreButton {
    display: flex;
    justify-content: center;
    align-items: center;
-   padding: 20px;
+   padding: 10px 15px;
    background-color: #292c35;
    border-radius: 5px;
    border: 0.7px solid #414755;
@@ -229,6 +234,7 @@
 
       .episode {
          width: 90%;
+         min-width: 300px;
 
          .info {
             .title {

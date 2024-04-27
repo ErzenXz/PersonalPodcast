@@ -19,11 +19,13 @@ async function check_if_logged_in(): Promise<boolean> {
    if (result.code !== 40 && result.code !== 41) {
       localStorage.setItem("user", JSON.stringify(result));
 
-      // Check if the access token is expired
+      // Check if the token is expired
       const tokenExpireDate = localStorage.getItem("tokenExpireDate");
-      // Check if the today's date is greater than the expiration date
-      if (tokenExpireDate && new Date().getTime() > new Date(tokenExpireDate).getTime()) {
+      const accessToken = localStorage.getItem("accessToken");
+      // Convert the stored expiration date to a Date object and compare it with the current UTC date
+      if (!tokenExpireDate || new Date() > new Date(tokenExpireDate) || !accessToken) {
          refreshToken();
+         console.log("Token refreshed");
       }
 
       return true;

@@ -1,61 +1,22 @@
 import "../scss/Episode.scss";
 import { useParams } from "react-router-dom";
+import Plyr from "plyr-react";
+import "plyr-react/plyr.css";
 import check_if_logged_in from "../services/is_logged";
 import { useEffect, useState } from "react";
 import type Episode from "../types/Episode";
 import Navigation from "../components/Navigation";
 import type Comment from "../types/Comment";
-
-const formatedDate = (date: string): string => {
-   const d = new Date(date);
-   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-};
-
-function formatLengthToTime(length: number): string {
-   const minutes = Math.floor(length / 60);
-   const seconds = length % 60;
-   return `${minutes}:${seconds}`;
-}
-
-function checkIfValidImageURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://images.unsplash.com/photo-1529641484336-ef35148bab06?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-   }
-   return url;
-}
-
-function checkIfValidAudioURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://personal-podcast-life-2.s3.amazonaws.com/72d1dc39-139c-46b2-b39b-72fdfadd6596.mp3";
-   }
-   return url;
-}
-
-function checkIfValidTitle(title: string): string {
-   if (title === null || title === "" || title === undefined || title == "string") {
-      return "No title";
-   }
-   return title;
-}
-
-function checkIfValidDescription(description: string): string {
-   if (
-      description === null ||
-      description === "" ||
-      description === undefined ||
-      description == "string"
-   ) {
-      return "No description";
-   }
-   return description;
-}
-
-function checkIfValidVideoURL(url: string): boolean {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return false;
-   }
-   return true;
-}
+import {
+   formatLengthToTime,
+   formatedDate,
+   checkIfValidTitle,
+   checkIfValidAudioURL,
+   checkIfValidDescription,
+   checkIfValidImageURL,
+   checkIfValidVideoURL,
+   checkIfVideoOrAudioURL,
+} from "../services/formatting_tools";
 
 function checkIfEpisodeExists(episode: Episode): boolean {
    if (
@@ -237,31 +198,52 @@ function Episode() {
                               <p className="description-E">
                                  {checkIfValidDescription(episode.description)}
                               </p>
-                              <div className="audio-E">
-                                 <audio controls>
-                                    <source
-                                       src={checkIfValidAudioURL(episode.audioFileUrl)}
-                                       type="audio/mpeg"
+                              {checkIfVideoOrAudioURL(
+                                 episode.videoFileUrl,
+                                 episode.audioFileUrl
+                              ) ? (
+                                 <div className="audio-E">
+                                    <Plyr
+                                       source={{
+                                          type: "audio",
+                                          title: checkIfValidTitle(episode.title),
+                                          sources: [
+                                             {
+                                                src: checkIfValidAudioURL(episode.audioFileUrl),
+                                                type: "audio/mp3",
+                                             },
+                                          ],
+                                       }}
                                     />
-                                    Your browser does not support the audio element.
-                                 </audio>
-                              </div>
-
-                              {checkIfValidVideoURL(episode.videoFileUrl) ? (
+                                 </div>
+                              ) : checkIfValidVideoURL(episode.videoFileUrl) ? (
                                  <div className="video-E">
-                                    <video controls>
-                                       <source src={episode.videoFileUrl} type="video/mp4" />
-                                       Your browser does not support the video element.
-                                    </video>
+                                    <Plyr
+                                       source={{
+                                          type: "video",
+                                          title: checkIfValidTitle(episode.title),
+                                          sources: [
+                                             {
+                                                src: episode.videoFileUrl,
+                                                type: "video/mp4",
+                                                size: 720,
+                                             },
+                                          ],
+                                       }}
+                                    />
                                  </div>
                               ) : (
                                  <></>
                               )}
                            </div>
 
-                           <div className="image-E">
-                              <img src={checkIfValidImageURL(episode.posterImg)} alt="Episode" />
-                           </div>
+                           {checkIfVideoOrAudioURL(episode.videoFileUrl, episode.audioFileUrl) ? (
+                              <div className="image-E">
+                                 <img src={checkIfValidImageURL(episode.posterImg)} alt="Episode" />
+                              </div>
+                           ) : (
+                              <></>
+                           )}
                         </div>
                      </div>
                   </div>
