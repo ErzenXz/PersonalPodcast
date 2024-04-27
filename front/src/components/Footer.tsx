@@ -15,15 +15,15 @@ function Footer() {
                </div>
 
                <div className="social">
-                  <a href="#">
+                  <a href="https://www.facebook.com/cahani" target="_blank">
                      <span>Facebook</span>
                      <FontAwesomeIcon icon={faFacebook} />
                   </a>
-                  <a href="#">
+                  <a href="https://twitter.com/MergimCahani" target="_blank">
                      <span>Twitter</span>
                      <FontAwesomeIcon icon={faTwitter} />
                   </a>
-                  <a href="#">
+                  <a href="https://www.instagram.com/mergca/" target="_blank">
                      <span>Instagram</span>
                      <FontAwesomeIcon icon={faInstagram} />
                   </a>
@@ -33,20 +33,20 @@ function Footer() {
                   <p>
                      <i className="fas fa-envelope"></i>
                      <span>
-                        <a href="mailto:erzen@erzen.tk">erzen@erzen.tk</a>
+                        <a href="mailto:mcahani@gmail.com">mcahani@gmail.com</a>
                      </span>
                   </p>
                   <p>
                      <i className="fas fa-phone"></i>
                      <span>
-                        <a href="tel:+38344123456">(+383) 44 123 456</a>
+                        <a href="tel:+38345649012">(+383) 45 649 012</a>
                      </span>
                   </p>
                </div>
             </div>
 
             <div className="copy">
-               <p>&copy; 2024 Lionel Messi Podcast</p>
+               <p>&copy; 2024 Mergim Cahani Podcast</p>
             </div>
          </footer>
       </>

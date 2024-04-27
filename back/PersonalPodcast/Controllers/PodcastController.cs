@@ -22,7 +22,7 @@ namespace PersonalPodcast.Controllers
             _dBContext = dBContext;
         }
         [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Create([FromBody]PodcastRequest request)
+        public async Task<IActionResult> Create(PodcastRequest request)
         {
             try
             {
@@ -73,7 +73,9 @@ namespace PersonalPodcast.Controllers
                     PosterImg = podcast.PosterImg,
                     AudioFileUrl = podcast.AudioFileUrl,
                     VideoFileUrl = podcast.VideoFileUrl,
-                    PublisherId = podcast.PublisherId
+                    PublisherId = podcast.PublisherId,
+                    CreatedDate = podcast.CreatedDate,
+                    LastUpdate = podcast.LastUpdate
                     
                 };
                 return Ok(podcastResponse);
@@ -85,11 +87,11 @@ namespace PersonalPodcast.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllPodcasts(int page)
+        public async Task<IActionResult> GetAllPodcasts(int page = 1)
         {
             if (page < 1)
             {
-                return BadRequest(new { Message = "Invalid page number.", Code = 55 });
+                return BadRequest(new { Message = "Invalid page number.", Code = 11 });
             }
 
             try
@@ -123,6 +125,105 @@ namespace PersonalPodcast.Controllers
             }
         }
 
+        // Get all episodes that belong to a podcast
+
+        [HttpGet("{id}/episodes")]
+        public async Task<IActionResult> GetPodcastEpisodes(long id, int page = 1)
+        {
+            try
+            {
+                if (page < 1)
+                {
+                    return BadRequest(new { Message = "Invalid page number.", Code = 11 });
+                }
+
+                var podcast = await _dBContext.Podcasts.FindAsync(id);
+                if (podcast == null)
+                {
+                    _logger.LogWarning($"Podcast with Id {id} not found");
+                    return NotFound(new { Message = $"Podcast with Id {id} not found.", Code = 60 });
+                }
+
+                var episodes = await _dBContext.Episodes
+                    .Where(e => e.PodcastId == id)
+                    .OrderByDescending(e => e.CreatedDate)
+                    .Skip((page - 1) * 10)
+                    .Take(10)
+                    .Select(e => new EpisodeResponse
+                    {
+                        Id = e.Id,
+                        Title = e.Title,
+                        Description = e.Description,
+                        Tags = e.Tags,
+                        PosterImg = e.PosterImg,
+                        AudioFileUrl = e.AudioFileUrl,
+                        VideoFileUrl = e.VideoFileUrl,
+                        Length = e.Length,
+                        Views = e.Views,
+                        PublisherId = e.PublisherId,
+                        CreatedDate = e.CreatedDate,
+                        LastUpdate = e.LastUpdate,
+                        PodcastId = e.PodcastId
+
+                    })
+                    .ToListAsync();
+
+                return Ok(episodes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving podcast episodes");
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+
+        // Search for podcasts by title, description or tags
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchPodcasts(string query, int page = 1)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest(new { Message = "Search query cannot be empty.", Code = 19 });
+            }
+
+            if (page < 1)
+            {
+                return BadRequest(new { Message = "Invalid page number.", Code = 11 });
+            }
+
+            try
+            {
+                var podcasts = await _dBContext.Podcasts
+                    .Where(p => p.Title.Contains(query) || p.Description.Contains(query) || p.Tags.Contains(query))
+                    .OrderByDescending(p => p.CreatedDate)
+                    .Skip((page - 1) * 10)
+                    .Take(10)
+                    .Select(p => new PodcastResponse
+                    {
+                        id = p.Id,
+                        Title = p.Title,
+                        Description = p.Description,
+                        CategoryId = p.CategoryId,
+                        Tags = p.Tags,
+                        PosterImg = p.PosterImg,
+                        AudioFileUrl = p.AudioFileUrl,
+                        VideoFileUrl = p.VideoFileUrl,
+                        PublisherId = p.PublisherId,
+                        CreatedDate = p.CreatedDate,
+                        LastUpdate = p.LastUpdate
+                    })
+                    .ToListAsync();
+
+                return Ok(podcasts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while searching for podcasts");
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+
         [HttpPut("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Update(long id, [FromBody] PodcastRequest request)
         {
@@ -148,7 +249,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation($"Podcast with Id {id} updated successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = "Podcast updated successfully.", Code = 87 });
             }
             catch (Exception ex)
             {
@@ -175,7 +276,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation($"Podcast  with Id {id} deleted successfully", id);
 
-                return Ok("Podcast deleted succesfuly!");
+                return Ok(new { Message = "Podcast deleted successfully.", Code = 88 });
                 
             }
             catch(Exception ex)

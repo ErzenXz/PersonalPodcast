@@ -11,7 +11,6 @@
         private const string SmtpUsername = "njnana2017@gmail.com";
         private const string SmtpPassword = "0x9DInWLh3F872U1";
 
-
         public static bool SendEmail(string fromAddress, string toAddress, string subject, string body)
         {
             MailMessage mail = new MailMessage(fromAddress, toAddress, subject, body);

@@ -25,7 +25,7 @@ namespace PersonalPodcast.Controllers
 
 
         
-        [HttpGet("getUserById"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpGet("id/{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<User> GetUserById(long id)
         {
             var user = await _dBContext.Users.FindAsync(id);
@@ -42,7 +42,7 @@ namespace PersonalPodcast.Controllers
             
         }
         
-        [HttpGet("getUserByUsername"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpGet("username/{username}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<User?> GetUserByUsername(string username)
         {
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.Username == username);
@@ -58,21 +58,21 @@ namespace PersonalPodcast.Controllers
             return user;
         }
 
-        [HttpGet("getUserByEmail"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpGet("email/{email}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<User> GetUsersByEmail(string email)
         {
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if(user == null)
             {
-                   return null;
+               return null;
             }
  
             return user;
 
         }
 
-        [HttpGet("getUsersByFullName"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpGet("fullname/{fullname}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async IAsyncEnumerable<User> GetUsersByFullName(string fullname)
         {
             var users = _dBContext.Users.Where(u => u.Username == fullname).AsAsyncEnumerable();
@@ -83,8 +83,8 @@ namespace PersonalPodcast.Controllers
 
         }
 
-        [HttpGet("getAllUsers"), Authorize(Roles = "Admin,SuperAdmin")]
-        public async IAsyncEnumerable<User> GetAllUsers(int page)
+        [HttpGet("all"), Authorize(Roles = "Admin,SuperAdmin")]
+        public async IAsyncEnumerable<User> GetAllUsers(int page = 1)
         {
             var users = _dBContext.Users.Skip(page * 10).Take(10).AsAsyncEnumerable();
             await foreach (var user in users)
@@ -94,7 +94,7 @@ namespace PersonalPodcast.Controllers
         }
 
 
-        [HttpPut("updateUser"),Authorize(Roles ="User,Admin,SuperAdmin")]
+        [HttpPut("update"),Authorize(Roles ="User,Admin,SuperAdmin")]
         public async Task<IActionResult> UpdateUser(string username, string fullname, string email, string newPassword, DateTime lastlogin, DateTime firstlogin, string conIP, DateTime birthday)
         {
 
@@ -103,24 +103,24 @@ namespace PersonalPodcast.Controllers
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
             if (user == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             if (_dBContext.Users.Any(u => u.Username == username))
             {
-                return BadRequest(new { Message = "Username already in use.", Code = 104 });
+                return BadRequest(new { Message = "Username already in use.", Code = 8 });
             }
 
             if (_dBContext.Users.Any(u => u.Email == email))
             {
-                return BadRequest(new { Message = "Email already in use.", Code = 105 });
+                return BadRequest(new { Message = "Email already in use.", Code = 7 });
             }
 
             user.Username = username;
@@ -137,17 +137,17 @@ namespace PersonalPodcast.Controllers
 
             SetCookies(refreshToken);
 
-            return Ok(new { Message = "User updated successfully.", Code = 150 });
+            return Ok(new { Message = "User updated successfully.", Code = 79 });
         }    
 
-        [HttpPatch("updateLastLogin")]
+        [HttpPatch("update/last-login")]
         public async Task<IActionResult> UpdateUserLastLogin()
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             var user1 = await _dBContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
@@ -155,147 +155,147 @@ namespace PersonalPodcast.Controllers
 
             if (user1 == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             user1.LastLogin = DateTime.UtcNow;
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "Last login updated successfully.", Code = 108 });
+            return Ok(new { Message = "Last login updated successfully.", Code = 80 });
         }
 
-        [HttpPatch("updateConnectingIp")]
+        [HttpPatch("update/connecting-ip")]
         public async Task<IActionResult> UpdateUserConnectingIp()
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             var user1 = await _dBContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
             if (user1 == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
 
             user1.ConnectingIp = HttpContext.Connection.RemoteIpAddress.ToString();
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "Connecting IP updated successfully.", Code = 109 });
+            return Ok(new { Message = "Connecting IP updated successfully.", Code = 81 });
         }
 
-        [HttpPatch("updateBirthdate")]
+        [HttpPatch("update/birthdate")]
         public async Task<IActionResult> UpdateUserBirthdate(DateTime newBirthDay)
         {
             var refreshToken = Request.Cookies["refreshToken"];
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
 
             if (user == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             // Check if the new birthdate is valid
             if (newBirthDay > DateTime.UtcNow)
             {
-                return BadRequest(new { Message = "Invalid birthdate.", Code = 114 });
+                return BadRequest(new { Message = "Invalid birthdate.", Code = 9 });
             }
 
             if (newBirthDay == user.Birthdate)
             {
-                return BadRequest(new { Message = "Birthdate is the same as the current one.", Code = 115 });
+                return BadRequest(new { Message = "Birthdate is the same as the current one.", Code = 15 });
             }
 
             user.Birthdate = newBirthDay;
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "Birthdate updated successfully.", Code = 110 });
+            return Ok(new { Message = "Birthdate updated successfully.", Code = 84 });
         }
 
-        [HttpPatch("updateUsername")]
+        [HttpPatch("update/username")]
         public async Task<IActionResult> UpdateUserUsername(string newUsername)
         {
             var refreshToken = Request.Cookies["refreshToken"];
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             if (user == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
             if (newUsername == null)
             {
-                   return BadRequest(new { Message = "Username cannot be empty.", Code = 103 });
+                   return BadRequest(new { Message = "Username cannot be empty.", Code = 12 });
             }
 
             if (_dBContext.Users.Any(u => u.Username == newUsername))
             {
-                return BadRequest(new { Message = "Username already in use.", Code = 104 });
+                return BadRequest(new { Message = "Username already in use.", Code = 8 });
             }
 
             user.Username = newUsername;
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "Username updated successfully.", Code = 111 });
+            return Ok(new { Message = "Username updated successfully.", Code = 82 });
 
         }
 
-        [HttpPatch("updateFullName")]
+        [HttpPatch("update/fullname")]
         public async Task<IActionResult> UpdateUserFullName(string newName)
         {
             var refreshToken = Request.Cookies["refreshToken"];
             if (refreshToken == null)
             {
-                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 107 });
+                return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             if (user == null)
             {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
+                return BadRequest(new { Message = "User not found.", Code = 36 });
             }
 
             if (newName == null)
             {
-                return BadRequest(new { Message = "Full name cannot be empty.", Code = 106 });
+                return BadRequest(new { Message = "Full name cannot be empty.", Code = 16 });
             }
 
             user.FullName = newName;
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "Full name updated successfully.", Code = 112 });
+            return Ok(new { Message = "Full name updated successfully.", Code = 83 });
         }
 
-        [HttpDelete("deleteUserById"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpDelete("delete/id/{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> DeleteUserById(long id)
         {
             var user = await _dBContext.Users.FindAsync(id);
             if (user == null)
             {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
+                return BadRequest(new { Message = "User not found.", Code = 36 });
             }
             _dBContext.Users.Remove(user);
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "User deleted successfully.", Code = 113 });
+            return Ok(new { Message = "User deleted successfully.", Code = 400 });
         }
 
-        [HttpDelete("deleteUserByUsername"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpDelete("delete/username/{username}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> DeleteUserByUsername(string username)
         {
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null)
             {
-                return BadRequest(new { Message = "User not found.", Code = 101 });
+                return BadRequest(new { Message = "User not found.", Code = 36 });
             }
             _dBContext.Users.Remove(user);
             await _dBContext.SaveChangesAsync();
-            return Ok(new { Message = "User deleted successfully.", Code = 113 });
+            return Ok(new { Message = "User deleted successfully.", Code = 400 });
         }
 
         private void SetCookies(string refreshToken)

@@ -1,0 +1,133 @@
+.items {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   padding: 20px;
+   gap: 50px;
+   margin-top: 135px;
+
+   .item2 {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      .episode {
+         display: flex;
+         align-items: center;
+         margin-bottom: 20px;
+         padding: 20px;
+         background-color: #292c35;
+         border-radius: 5px;
+         border: 0.7px solid #414755;
+         transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1) 0ms;
+         width: 800px;
+
+         .info {
+            flex-grow: 1;
+            padding: 10px;
+
+            .title {
+               font-size: 1.5em;
+               margin-bottom: 30px;
+            }
+
+            .description {
+               font-size: 1em;
+            }
+
+            .audio {
+               display: flex;
+               align-items: center;
+               margin-top: 10px;
+
+               audio {
+                  width: 100%;
+               }
+            }
+
+            .more {
+               display: flex;
+               align-items: center;
+               margin-top: 10px;
+
+               .duration {
+                  font-size: 0.8em;
+                  margin-right: 10px;
+               }
+
+               .rating,
+               .date,
+               .podcast {
+                  margin-right: 10px;
+                  font-size: 0.8em;
+               }
+            }
+         }
+
+         .image {
+            flex-grow: 0;
+            padding: 10px;
+
+            img {
+               width: 100px;
+               height: 100px;
+               border-radius: 5px;
+               object-fit: cover;
+            }
+         }
+      }
+
+      .episode:hover {
+         background-color: rgba(65, 71, 85, 0.5);
+         cursor: pointer;
+      }
+   }
+}
+
+@media screen and (max-width: 800px) {
+   .items {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .item1 {
+      }
+
+      .item2 {
+         .episode {
+            width: 100%;
+            max-width: fit-content;
+            flex-direction: column;
+         }
+
+         .episode .info {
+            .title {
+               font-size: 1.2em;
+            }
+
+            .description {
+               font-size: 0.9em;
+            }
+
+            .more {
+               .duration {
+                  font-size: 0.7em;
+               }
+
+               .rating,
+               .date,
+               .podcast {
+                  font-size: 0.7em;
+               }
+            }
+         }
+
+         .episode .image {
+            img {
+               width: fit-content;
+               height: auto;
+            }
+         }
+      }
+   }
+}

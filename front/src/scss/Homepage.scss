@@ -6,7 +6,7 @@
    flex-direction: row;
    align-items: center;
    height: 950px;
-   background-image: url("https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+   background-image: url("https://images.unsplash.com/photo-1510519138101-570d1dca3d66?q=80&w=2047&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
    background-size: cover;
    background-position: center;
    background-blend-mode: darken;
@@ -24,8 +24,8 @@
       flex-direction: column;
       flex-grow: 2;
       padding: 20px;
-      max-width: 700px;
-      margin-left: 20%;
+      max-width: 900px;
+      margin-left: 5%;
 
       h1 {
          font-size: 3.5em;
@@ -45,12 +45,12 @@
       padding: 20px;
 
       img {
-         width: 500px;
+         width: 900px;
          height: 50%;
          border-radius: 5px;
          object-fit: cover;
          margin-right: 10px;
-         margin-bottom: -274px;
+         margin-bottom: -349px;
       }
    }
 }

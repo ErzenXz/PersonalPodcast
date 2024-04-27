@@ -24,7 +24,7 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpPost, Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Create([FromBody] EpisodeRequest request)
+        public async Task<IActionResult> Create(EpisodeRequest request)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace PersonalPodcast.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating episode");
-                return StatusCode(500, "An error occurred while processing the request. " + ex.Message);
+                return StatusCode(500, "An error occurred while processing the request. " + ex.InnerException?.Message);
             }
         }
 
@@ -98,11 +98,11 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEpisodes(int page)
+        public async Task<IActionResult> GetAllEpisodes(int page = 1)
         {
             if (page < 1)
             {
-                return BadRequest(new { Message = "Invalid page number.", Code = 55 });
+                return BadRequest(new { Message = "Invalid page number.", Code = 11 });
             }
 
             try
@@ -138,6 +138,53 @@ namespace PersonalPodcast.Controllers
             }
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchEpisodes(string query, int page = 1)
+        {
+            if (page < 1)
+            {
+                return BadRequest(new { Message = "Invalid page number.", Code = 11 });
+            }
+
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest(new { Message = "Search query cannot be empty.", Code = 19 });
+            }
+
+            try
+            {
+                var episodes = await _dBContext.Episodes
+                    .Where(c => c.Title.Contains(query) || c.Tags.Contains(query) || c.Description.Contains(query))
+                    .OrderByDescending(c => c.CreatedDate)
+                    .Skip((page - 1) * 10)
+                    .Take(10)
+                    .Select(c => new EpisodeResponse
+                    {
+                        Id = c.Id,
+                        PodcastId = c.PodcastId,
+                        Title = c.Title,
+                        Description = c.Description,
+                        Tags = c.Tags,
+                        PosterImg = c.PosterImg,
+                        AudioFileUrl = c.AudioFileUrl,
+                        VideoFileUrl = c.VideoFileUrl,
+                        Length = c.Length,
+                        Views = c.Views,
+                        PublisherId = c.PublisherId,
+                        CreatedDate = c.CreatedDate,
+                        LastUpdate = c.LastUpdate
+                    })
+                    .ToListAsync();
+
+                return Ok(episodes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while searching episodes");
+                return StatusCode(500, "An error occurred while processing the request. " + ex.Message);
+            }
+        }
+
         [HttpPut("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Update(long id, [FromBody] EpisodeRequest request)
         {
@@ -167,7 +214,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Episode with Id {EpisodeId} updated successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = "Podcast updated successfully.", Code = 89 });
             }
             catch (Exception ex)
             {
@@ -195,7 +242,7 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation($"Episode with Id {id} deleted successfully", id);
 
-                return NoContent();
+                return Ok(new { Message = "Podcast deleted successfully.", Code = 90 });
 
             }
             catch (Exception ex)

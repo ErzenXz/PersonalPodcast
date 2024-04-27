@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalPodcast.Data;
 
@@ -11,9 +12,11 @@ using PersonalPodcast.Data;
 namespace PersonalPodcast.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20240423210521_GCloudRelease")]
+    partial class GCloudRelease
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,9 +72,11 @@ namespace PersonalPodcast.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EpisodeId");
+                    b.HasIndex("EpisodeId")
+                        .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("audioAnalytics");
                 });
@@ -115,9 +120,11 @@ namespace PersonalPodcast.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EpisodeId");
+                    b.HasIndex("EpisodeId")
+                        .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("comments");
                 });
@@ -172,9 +179,11 @@ namespace PersonalPodcast.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PodcastId");
+                    b.HasIndex("PodcastId")
+                        .IsUnique();
 
-                    b.HasIndex("PublisherId");
+                    b.HasIndex("PublisherId")
+                        .IsUnique();
 
                     b.ToTable("Episodes");
                 });
@@ -227,7 +236,8 @@ namespace PersonalPodcast.Migrations
                     b.HasIndex("CategoryId")
                         .IsUnique();
 
-                    b.HasIndex("PublisherId");
+                    b.HasIndex("PublisherId")
+                        .IsUnique();
 
                     b.ToTable("Podcasts");
                 });
@@ -254,9 +264,11 @@ namespace PersonalPodcast.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EpisodeId");
+                    b.HasIndex("EpisodeId")
+                        .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("ratings");
                 });
@@ -436,14 +448,14 @@ namespace PersonalPodcast.Migrations
             modelBuilder.Entity("PersonalPodcast.Models.AudioAnalytics", b =>
                 {
                     b.HasOne("PersonalPodcast.Models.Episode", "Episode")
-                        .WithMany("AudioAnalytics")
-                        .HasForeignKey("EpisodeId")
+                        .WithOne("AudioAnalytics")
+                        .HasForeignKey("PersonalPodcast.Models.AudioAnalytics", "EpisodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PersonalPodcast.Models.User", "User")
-                        .WithMany("AudioAnalytics")
-                        .HasForeignKey("UserId")
+                        .WithOne("AudioAnalytics")
+                        .HasForeignKey("PersonalPodcast.Models.AudioAnalytics", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -455,14 +467,14 @@ namespace PersonalPodcast.Migrations
             modelBuilder.Entity("PersonalPodcast.Models.Comment", b =>
                 {
                     b.HasOne("PersonalPodcast.Models.Episode", "Episode")
-                        .WithMany("Comments")
-                        .HasForeignKey("EpisodeId")
+                        .WithOne("Comment")
+                        .HasForeignKey("PersonalPodcast.Models.Comment", "EpisodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PersonalPodcast.Models.User", "User")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
+                        .WithOne("Comment")
+                        .HasForeignKey("PersonalPodcast.Models.Comment", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -474,14 +486,14 @@ namespace PersonalPodcast.Migrations
             modelBuilder.Entity("PersonalPodcast.Models.Episode", b =>
                 {
                     b.HasOne("PersonalPodcast.Models.Podcast", null)
-                        .WithMany("Episodes")
-                        .HasForeignKey("PodcastId")
+                        .WithOne("Episode")
+                        .HasForeignKey("PersonalPodcast.Models.Episode", "PodcastId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PersonalPodcast.Models.User", "User")
-                        .WithMany("Episodes")
-                        .HasForeignKey("PublisherId")
+                        .WithOne("Episode")
+                        .HasForeignKey("PersonalPodcast.Models.Episode", "PublisherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -497,8 +509,8 @@ namespace PersonalPodcast.Migrations
                         .IsRequired();
 
                     b.HasOne("PersonalPodcast.Models.User", "User")
-                        .WithMany("Podcasts")
-                        .HasForeignKey("PublisherId")
+                        .WithOne("Podcast")
+                        .HasForeignKey("PersonalPodcast.Models.Podcast", "PublisherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -510,14 +522,14 @@ namespace PersonalPodcast.Migrations
             modelBuilder.Entity("PersonalPodcast.Models.Rating", b =>
                 {
                     b.HasOne("PersonalPodcast.Models.Episode", "Episode")
-                        .WithMany("Ratings")
-                        .HasForeignKey("EpisodeId")
+                        .WithOne("Rating")
+                        .HasForeignKey("PersonalPodcast.Models.Rating", "EpisodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PersonalPodcast.Models.User", "User")
-                        .WithMany("Ratings")
-                        .HasForeignKey("UserId")
+                        .WithOne("Rating")
+                        .HasForeignKey("PersonalPodcast.Models.Rating", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -545,16 +557,20 @@ namespace PersonalPodcast.Migrations
 
             modelBuilder.Entity("PersonalPodcast.Models.Episode", b =>
                 {
-                    b.Navigation("AudioAnalytics");
+                    b.Navigation("AudioAnalytics")
+                        .IsRequired();
 
-                    b.Navigation("Comments");
+                    b.Navigation("Comment")
+                        .IsRequired();
 
-                    b.Navigation("Ratings");
+                    b.Navigation("Rating")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PersonalPodcast.Models.Podcast", b =>
                 {
-                    b.Navigation("Episodes");
+                    b.Navigation("Episode")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PersonalPodcast.Models.User", b =>
@@ -562,15 +578,20 @@ namespace PersonalPodcast.Migrations
                     b.Navigation("Admin")
                         .IsRequired();
 
-                    b.Navigation("AudioAnalytics");
+                    b.Navigation("AudioAnalytics")
+                        .IsRequired();
 
-                    b.Navigation("Comments");
+                    b.Navigation("Comment")
+                        .IsRequired();
 
-                    b.Navigation("Episodes");
+                    b.Navigation("Episode")
+                        .IsRequired();
 
-                    b.Navigation("Podcasts");
+                    b.Navigation("Podcast")
+                        .IsRequired();
 
-                    b.Navigation("Ratings");
+                    b.Navigation("Rating")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

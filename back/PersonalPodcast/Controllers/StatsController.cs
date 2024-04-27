@@ -48,5 +48,32 @@ namespace PersonalPodcast.Controllers
             }
         }
 
+        // Add a view count to the episode
+
+        [HttpPatch, AllowAnonymous]
+        public async Task<IActionResult> AddViewCount(int episodeId)
+        {
+            try
+            {
+                var episode = await _dBContext.Episodes.FirstOrDefaultAsync(e => e.Id == episodeId);
+
+                if (episode == null)
+                {
+                    return NotFound(new { Message = $"Episode with Id {episodeId} not found.", Code = 59 });
+                }
+
+                episode.Views += 1;
+                await _dBContext.SaveChangesAsync();
+
+                return Ok(new {Message = "View count updated successfully", Code= 97 });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating view count");
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
+
+
     }
 }

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "../scss/Login.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Register {
    email: string;
@@ -14,10 +14,6 @@ interface Register {
 let goHomePage = () => {};
 
 function doLogin(email: string, password: string) {
-   console.log("doLogin called");
-   console.log("email: " + email);
-   console.log("password: " + password);
-
    const myHeaders = new Headers();
    myHeaders.append("Content-Type", "application/json");
 
@@ -31,16 +27,46 @@ function doLogin(email: string, password: string) {
       headers: myHeaders,
       body: raw,
       redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
    };
 
-   fetch("http://localhost:5009/auth/login", requestOptions)
+   fetch("https://api.erzen.tk/auth/login", requestOptions)
       .then((response) => response.json())
-      .then((result) => console.log(result))
+      .then((result) => {
+         const expireIn15Mins = new Date(new Date().getTime() + 15 * 60 * 1000);
+         switch (result.code) {
+            case 38:
+               localStorage.setItem("accessToken", result.accessToken);
+               localStorage.setItem("tokenExpireDate", expireIn15Mins.getTime().toString());
+               goHomePage();
+               break;
+            case 37:
+               alert("Invalid password");
+               break;
+            case 3:
+               alert("Email and password are required.");
+               break;
+            case 4:
+               alert("Email must be between 5 and 100 characters.");
+               break;
+            case 2:
+               alert("You need to provide a valid password in order to login.");
+               break;
+            case 44:
+               alert(
+                  "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users."
+               );
+               break;
+            case 36:
+               alert(
+                  "The email you provided is not registered in our system. Please check the email and try again."
+               );
+               break;
+            default:
+               alert("Something went wrong");
+         }
+      })
       .catch((error) => console.log("error", error));
-
-   localStorage.setItem("token", "true");
-
-   goHomePage();
    return true;
 }
 
@@ -62,6 +88,7 @@ function setBackgroundImageFromList() {
       "https://images.unsplash.com/photo-1545431613-51ec097943c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "https://images.unsplash.com/photo-1521133573892-e44906baee46?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1529641484336-ef35148bab06?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "https://images.unsplash.com/photo-1559251606-c623743a6d76?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "https://images.unsplash.com/photo-1558470598-a5dda9640f68?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "https://images.unsplash.com/photo-1447703693928-9cd89c8d3ac5?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -87,6 +114,30 @@ function Login() {
    const [confirmPassword, setConfirmPassword] = useState("");
    const navigate = useNavigate();
    goHomePage = () => navigate("/");
+
+   // Fetch the API to see if the user is logged in
+   const myHeaders = new Headers();
+   myHeaders.append("Content-Type", "application/json");
+
+   const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+   };
+
+   useEffect(() => {
+      fetch("https://api.erzen.tk/auth/info", requestOptions)
+         .then((response) => response.json())
+         .then((result) => {
+            if (result.code === 8) {
+               goHomePage();
+            } else {
+               console.log("User is not logged in.");
+            }
+         })
+         .catch((error) => console.log("error", error));
+   }, []);
 
    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
