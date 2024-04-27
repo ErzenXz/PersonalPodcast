@@ -44,6 +44,7 @@
                .audio-E {
                   display: flex;
                   align-items: center;
+                  justify-content: center;
                   margin-top: 10px;
 
                   audio {
@@ -54,6 +55,7 @@
                .video-E {
                   display: flex;
                   align-items: center;
+                  justify-content: center;
                   margin-top: 10px;
 
                   video {
@@ -91,51 +93,6 @@
                   border-radius: 5px;
                   object-fit: cover;
                }
-            }
-         }
-      }
-   }
-}
-
-@media screen and (max-width: 800px) {
-   .items {
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-
-      .item2 {
-         .episode {
-            width: 100%;
-            max-width: fit-content;
-            flex-direction: column;
-         }
-
-         .episode .info {
-            .title {
-               font-size: 1.2em;
-            }
-
-            .description {
-               font-size: 0.9em;
-            }
-
-            .more {
-               .duration {
-                  font-size: 0.7em;
-               }
-
-               .rating,
-               .date,
-               .podcast {
-                  font-size: 0.7em;
-               }
-            }
-         }
-
-         .episode .image {
-            img {
-               width: fit-content;
-               height: auto;
             }
          }
       }
@@ -260,4 +217,75 @@
    align-items: center;
    width: 100%;
    margin-top: 30px;
+}
+
+@media screen and (max-width: 800px) {
+   .items-E {
+      .item2-E {
+         .episodes-E {
+            .episode-E {
+               width: 100%;
+               flex-direction: column;
+
+               .info-E {
+                  .title-E {
+                     min-width: 300px;
+                     width: 100%;
+                  }
+
+                  .description-E {
+                     width: 100%;
+                  }
+
+                  .audio-E {
+                     width: 100%;
+                  }
+
+                  .video-E {
+                     width: 100%;
+                  }
+
+                  .more-E {
+                     width: 100%;
+                  }
+               }
+
+               .image-E {
+                  order: 0;
+
+                  img {
+                     width: 100%;
+                     height: 200px;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   .comments {
+      width: 100%;
+
+      .create {
+         form {
+            textarea {
+               width: 100%;
+            }
+         }
+      }
+
+      .list {
+         .comment {
+            width: 100%;
+         }
+      }
+   }
+
+   .center {
+      margin-top: 0;
+   }
+
+   .pagination {
+      margin-top: 20px;
+   }
 }

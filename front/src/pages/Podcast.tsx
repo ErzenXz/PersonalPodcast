@@ -6,6 +6,16 @@ import check_if_logged_in from "../services/is_logged";
 import type Episode from "../types/Episode";
 import PodcastCard from "../components/PodcastCard";
 import "../scss/Podcast.scss";
+import authenticatorPulse from "../services/authenticatorPulse";
+
+import {
+   checkIfValidTitle,
+   checkIfValidDescription,
+   checkIfValidAudioURL,
+   checkIfValidImageURL,
+   formatedDate,
+   formatLengthToTime,
+} from "../services/formatting_tools";
 
 async function getPodcast(id: string): Promise<Podcast | null> {
    const headers = new Headers();
@@ -51,53 +61,10 @@ async function getAllEpisodesFromPodcast(id: string): Promise<Episode[]> {
       });
 }
 
-const formatedDate = (date: string): string => {
-   const d = new Date(date);
-   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-};
-
-function formatLengthToTime(length: number): string {
-   const minutes = Math.floor(length / 60);
-   const seconds = length % 60;
-   return `${minutes}:${seconds}`;
-}
-
-function checkIfValidImageURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://via.placeholder.com/150";
-   }
-   return url;
-}
-
-function checkIfValidAudioURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://personal-podcast-life-2.s3.amazonaws.com/72d1dc39-139c-46b2-b39b-72fdfadd6596.mp3";
-   }
-   return url;
-}
-
-function checkIfValidTitle(title: string): string {
-   if (title === null || title === "" || title === undefined || title == "string") {
-      return "No title";
-   }
-   return title;
-}
-
-function checkIfValidDescription(description: string): string {
-   if (
-      description === null ||
-      description === "" ||
-      description === undefined ||
-      description == "string"
-   ) {
-      return "No description";
-   }
-   return description;
-}
-
 // Function to add the play time of the episode to the database
 async function addPlayTimeToDatabase(episodeId: number, playTime: number) {
-   // Replace `API_ENDPOINT` with the actual endpoint URL
+   authenticatorPulse();
+
    await fetch("https://api.erzen.tk/analytics", {
       method: "POST",
       headers: {
@@ -118,17 +85,8 @@ async function addPlayTimeToDatabase(episodeId: number, playTime: number) {
       })
       .catch((error) => {
          console.error("Error:", error);
-
-         // If the access token is expired, refresh it and try again
-         // refreshToken().then((value) => {
-         //    if (value) {
-         //       addPlayTimeToDatabase(episodeId, playTime);
-         //    }
-         // });
       });
 }
-
-addPlayTimeToDatabase(12, 1);
 
 function Podcast() {
    const params = useParams<{ podcastId: string }>();

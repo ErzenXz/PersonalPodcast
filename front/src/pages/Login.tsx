@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "../scss/Login.scss";
 import { useEffect, useState } from "react";
+import Popup from "../components/Popup";
 
 interface Register {
    email: string;
@@ -13,7 +14,7 @@ interface Register {
 
 let goHomePage = () => {};
 
-function doLogin(email: string, password: string) {
+async function doLogin(email: string, password: string): Promise<string> {
    const myHeaders = new Headers();
    myHeaders.append("Content-Type", "application/json");
 
@@ -30,57 +31,148 @@ function doLogin(email: string, password: string) {
       credentials: "include" as RequestCredentials,
    };
 
-   fetch("https://api.erzen.tk/auth/login", requestOptions)
+   let messageToReturn = "";
+
+   await fetch("https://api.erzen.tk/auth/login", requestOptions)
       .then((response) => response.json())
       .then((result) => {
-         const expireIn15Mins = new Date(new Date().getTime() + 15 * 60 * 1000);
+         const expireIn15Mins = new Date(Date.now() + 15 * 60000);
+
          switch (result.code) {
             case 38:
+               messageToReturn = "You have successfully logged in!";
+
                localStorage.setItem("accessToken", result.accessToken);
-               localStorage.setItem("tokenExpireDate", expireIn15Mins.getTime().toString());
+               localStorage.setItem("tokenExpireDate", expireIn15Mins.toISOString());
                goHomePage();
                break;
             case 37:
-               alert("Invalid password");
+               messageToReturn =
+                  "The password you provided is incorrect. Please check the password and try again.";
                break;
             case 3:
-               alert("Email and password are required.");
+               messageToReturn = "Email and password are required.";
                break;
             case 4:
-               alert("Email must be between 5 and 100 characters.");
+               messageToReturn = "Email must be between 5 and 100 characters.";
                break;
             case 2:
-               alert("You need to provide a valid password in order to login.");
+               messageToReturn = "Vald password is required.";
                break;
             case 44:
-               alert(
-                  "Our system has detected multiple login attempts from your IP address, which is a violation of our Terms of Service. As a result, access from your IP has been temporarily blocked for 10 minutes. This measure helps protect our platform from unauthorized access and ensures a secure environment for all users."
-               );
+               messageToReturn =
+                  "You have been temporarily blocked from our system due to multiple failed login attempts. Please try again in 10 minutes.";
                break;
             case 36:
-               alert(
-                  "The email you provided is not registered in our system. Please check the email and try again."
-               );
+               messageToReturn =
+                  "The email you provided is not registered in our system. Please check the email and try again.";
                break;
             default:
-               alert("Something went wrong");
+               messageToReturn = "Something went wrong";
          }
       })
       .catch((error) => console.log("error", error));
-   return true;
+   return messageToReturn;
 }
 
-function doSignup(user: Register) {
-   // Add your signup logic here
-   console.log(user.email);
-   console.log(user.password);
-   console.log(user.username);
-   console.log(user.fullName);
-   console.log(user.birthday);
-   console.log(user.confirmPassword);
+async function doSignup(user: Register): Promise<string> {
+   // Validate the user input
 
-   localStorage.setItem("token", "true");
-   goHomePage();
+   if (
+      !user.email ||
+      !user.password ||
+      !user.username ||
+      !user.fullName ||
+      !user.birthday ||
+      !user.confirmPassword
+   ) {
+      return "All fields are required.";
+   }
+
+   if (user.email.length < 5 || user.email.length > 100) {
+      return "Email must be between 5 and 100 characters.";
+   }
+
+   if (user.password.length < 8 || user.password.length > 100) {
+      return "Password must be between 8 and 100 characters.";
+   }
+
+   if (user.username.length < 3 || user.username.length > 20) {
+      return "Username must be at least 3 characters.";
+   }
+
+   if (user.fullName.length < 3 || user.fullName.length > 100) {
+      return "Full name must be between 3 and 100 characters.";
+   }
+
+   if (!user.birthday) {
+      return "Birthday is required.";
+   }
+
+   if (user.password !== user.confirmPassword) {
+      return "Passwords do not match.";
+   }
+
+   if (user.birthday > new Date().toISOString().split("T")[0]) {
+      return "Birthday cannot be in the future.";
+   }
+
+   const myHeaders = new Headers();
+   myHeaders.append("Content-Type", "application/json");
+
+   const raw = JSON.stringify({
+      username: user.username,
+      fullName: user.fullName,
+      email: user.email,
+      password: user.password,
+      birthdate: user.birthday,
+   });
+
+   const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+   };
+
+   let messageToReturn = "";
+
+   await fetch("https://api.erzen.tk/auth/register", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+         switch (result.code) {
+            case 43:
+               messageToReturn = "You have successfully signed up!";
+               break;
+            case 3:
+               messageToReturn = "All fields are required.";
+               break;
+            case 4:
+               messageToReturn = "Email must be between 5 and 100 characters.";
+               break;
+            case 5:
+               messageToReturn = "Password must be between 8 and 100 characters.";
+               break;
+            case 6:
+               messageToReturn = "Birthday is required.";
+               break;
+            case 7:
+               messageToReturn = "Email already in use.";
+               break;
+            case 8:
+               messageToReturn = "Username already in use.";
+               break;
+            case 44:
+               messageToReturn =
+                  "You have been temporarily blocked by our automated system due to multiple failed login attempts. Please try again in 10 minutes.";
+               break;
+            default:
+               messageToReturn = "Something went wrong";
+         }
+      })
+      .catch((error) => console.log("error", error));
+   return messageToReturn;
 }
 
 function setBackgroundImageFromList() {
@@ -112,8 +204,16 @@ function Login() {
    const [fullName, setFullName] = useState("");
    const [birthday, setBirthday] = useState("");
    const [confirmPassword, setConfirmPassword] = useState("");
+   const [popupMessage, setPopupMessage] = useState("");
+
+   const [update, setUpdate] = useState(false);
+
    const navigate = useNavigate();
-   goHomePage = () => navigate("/");
+   goHomePage = () => {
+      setTimeout(() => {
+         navigate("/");
+      }, 500);
+   };
 
    // Fetch the API to see if the user is logged in
    const myHeaders = new Headers();
@@ -139,12 +239,16 @@ function Login() {
          .catch((error) => console.log("error", error));
    }, []);
 
-   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      setUpdate(!update);
       event.preventDefault();
+      let response: string;
       if (showLogin) {
+         setPopupMessage("Logging in...");
          // Call the login function
-         doLogin(email, password);
+         response = await doLogin(email, password);
       } else {
+         setPopupMessage("Signing up...");
          const user: Register = {
             email,
             password,
@@ -154,86 +258,97 @@ function Login() {
             confirmPassword,
          };
 
-         doSignup(user);
+         response = await doSignup(user);
+
+         if (response === "You have successfully signed up!") {
+            response = await doLogin(email, password);
+         }
       }
+      setPopupMessage(response);
    };
 
    return (
-      <div className="container loginC" style={{ backgroundImage: backGroundImg }}>
-         <div className={showLogin ? "login" : "signup"}>
-            <h1>{showLogin ? "Login" : "Signup"}</h1>
-            <form onSubmit={handleSubmit}>
-               {!showLogin && (
+      <>
+         <div className="container loginC" style={{ backgroundImage: backGroundImg }}>
+            <div className={showLogin ? "login" : "signup"}>
+               <h1>{showLogin ? "Login" : "Signup"}</h1>
+               <form onSubmit={handleSubmit}>
+                  {!showLogin && (
+                     <input
+                        type="text"
+                        placeholder="Username"
+                        required
+                        value={username}
+                        onChange={(e) => {
+                           setUsername(e.target.value);
+                        }}
+                     />
+                  )}
+                  {!showLogin && (
+                     <input
+                        type="text"
+                        placeholder="Full Name"
+                        required
+                        value={fullName}
+                        onChange={(e) => {
+                           setFullName(e.target.value);
+                        }}
+                     />
+                  )}
                   <input
-                     type="text"
-                     placeholder="Username"
+                     type="email"
+                     autoComplete="email"
+                     placeholder="Email"
                      required
-                     value={username}
-                     onChange={(e) => {
-                        setUsername(e.target.value);
-                     }}
+                     value={email}
+                     onChange={(e) => setEmail(e.target.value)}
                   />
-               )}
-               {!showLogin && (
-                  <input
-                     type="text"
-                     placeholder="Full Name"
-                     required
-                     value={fullName}
-                     onChange={(e) => {
-                        setFullName(e.target.value);
-                     }}
-                  />
-               )}
-               <input
-                  type="email"
-                  autoComplete="email"
-                  placeholder="Email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-               />
-               {!showLogin && (
-                  <input
-                     type="date"
-                     placeholder="Birthday"
-                     value={birthday}
-                     onChange={(e) => {
-                        setBirthday(e.target.value);
-                     }}
-                  />
-               )}
-               <input
-                  type="password"
-                  placeholder="Password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-               />
-               {!showLogin && (
+                  {!showLogin && (
+                     <input
+                        type="date"
+                        placeholder="Birthday"
+                        value={birthday}
+                        onChange={(e) => {
+                           setBirthday(e.target.value);
+                        }}
+                     />
+                  )}
                   <input
                      type="password"
-                     placeholder="Confirm Password"
+                     placeholder="Password"
                      required
-                     value={confirmPassword}
-                     onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                     }}
+                     value={password}
+                     onChange={(e) => setPassword(e.target.value)}
                   />
-               )}
-               <button type="submit">{showLogin ? "Login" : "Signup"}</button>
-            </form>
-            <a
-               href="#"
-               onClick={(e) => {
-                  e.preventDefault();
-                  setShowLogin(!showLogin);
-               }}
-            >
-               {showLogin ? "Create a new account!" : "Already have an account?"}
-            </a>
+                  {!showLogin && (
+                     <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => {
+                           setConfirmPassword(e.target.value);
+                        }}
+                     />
+                  )}
+                  <button type="submit">{showLogin ? "Login" : "Signup"}</button>
+               </form>
+               <a
+                  href="#"
+                  onClick={(e) => {
+                     e.preventDefault();
+                     setShowLogin(!showLogin);
+                  }}
+               >
+                  {showLogin ? "Create a new account!" : "Already have an account?"}
+               </a>
+            </div>
          </div>
-      </div>
+
+         {popupMessage && (
+            <Popup message={popupMessage} duration={5000} delay={0} update={update} />
+         )}
+      </>
    );
 }
 

@@ -17,9 +17,10 @@ async function refreshToken(): Promise<boolean> {
 
    if (result.code !== 40 && result.code !== 41) {
       if (typeof result === "object" && "accessToken" in result) {
-         const expireIn15Mins = new Date(new Date().getTime() + 15 * 60 * 1000);
+         const expireIn15Mins = new Date(Date.now() + 15 * 60000);
+
          localStorage.setItem("accessToken", result.accessToken);
-         localStorage.setItem("tokenExpireDate", expireIn15Mins.getTime().toString());
+         localStorage.setItem("tokenExpireDate", expireIn15Mins.toISOString());
          return true;
       } else {
          localStorage.removeItem("user");
