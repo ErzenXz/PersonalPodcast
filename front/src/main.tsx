@@ -28,6 +28,7 @@ const router = createBrowserRouter([
    {
       path: "/episodes",
       element: <h1> Episodes </h1>,
+
    },
    {
       path: "/episode/:episodeId",
