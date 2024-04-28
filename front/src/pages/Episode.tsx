@@ -17,6 +17,9 @@ import {
    checkIfValidVideoURL,
    checkIfVideoOrAudioURL,
 } from "../services/formatting_tools";
+import authenticatorPulse from "../services/authenticatorPulse";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 function checkIfEpisodeExists(episode: Episode): boolean {
    if (
@@ -76,6 +79,63 @@ async function getComments(id: string, page: number = 1): Promise<Comment[] | nu
       });
 }
 
+// Function to get the ratings of the episode
+
+async function getRating(id: number): Promise<number | null> {
+   const headers = new Headers();
+   headers.append("Content-Type", "application/json");
+
+   const requestOptions = {
+      method: "GET",
+      headers: headers,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+   };
+
+   return await fetch(`https://api.erzen.tk/ratings/episode/${id}/average`, requestOptions)
+      .then((response) => response.json())
+      .then((result: number) => {
+         return result;
+      })
+      .catch((error) => {
+         console.error("Error:", error);
+         return null; // Return null in case of an error
+      });
+}
+
+// Function to rate an episode
+
+async function rateEpisode(id: number, rating: number): Promise<boolean> {
+   authenticatorPulse();
+
+   const headers = new Headers();
+   headers.append("Content-Type", "application/json");
+   headers.append("Authorization", `Bearer ${localStorage.getItem("accessToken")}`);
+
+   const requestOptions = {
+      method: "POST",
+      headers: headers,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+      body: JSON.stringify({
+         episodeId: id,
+         userId: JSON.parse(localStorage.getItem("user") || "{}").id,
+         ratingValue: rating,
+         date: new Date().toISOString(),
+      }),
+   };
+
+   return await fetch(`https://api.erzen.tk/ratings`, requestOptions)
+      .then((response) => response.json())
+      .then((result: boolean) => {
+         return result;
+      })
+      .catch((error) => {
+         console.error("Error:", error);
+         return false; // Return false in case of an error
+      });
+}
+
 function Episode() {
    const params = useParams<{ episodeId: string }>();
 
@@ -86,9 +146,10 @@ function Episode() {
    const [loadingComments, setLoadingComments] = useState(true);
    const [comments, setComments] = useState<Comment[]>([]);
    const [page, setPage] = useState(1);
-
    const [textarea, setTextarea] = useState("");
-
+   const [rating, setRating] = useState<number | null>(null);
+   const [ratingLoading, setRatingLoading] = useState(true);
+   const [selectedRating, setSelectedRating] = useState<number | null>(null);
    const maxWords = 100;
 
    useEffect(() => {
@@ -104,6 +165,10 @@ function Episode() {
             getComments(episodeId, page).then((result) => {
                setComments(result || []);
                setLoadingComments(false);
+            });
+            getRating(parseInt(episodeId)).then((result) => {
+               setRating(result);
+               setRatingLoading(false);
             });
          });
       } else {
@@ -192,6 +257,44 @@ function Episode() {
 
                                  <div className="duration-E">
                                     <p>{formatLengthToTime(episode.length)}</p>
+                                 </div>
+
+                                 <div className="rating-E">
+                                    {ratingLoading ? (
+                                       <p>Loading...</p>
+                                    ) : (
+                                       <p>
+                                          {rating && rating !== -1
+                                             ? rating.toFixed(1)
+                                             : "No rating"}
+                                       </p>
+                                    )}
+                                 </div>
+
+                                 <div className="rate-E">
+                                    {Array.from({ length: 5 }, (_, i) => (
+                                       <FontAwesomeIcon
+                                          icon={faStar}
+                                          key={i}
+                                          onClick={() => {
+                                             rateEpisode(episode.id, i + 1).then((result) => {
+                                                if (result) {
+                                                   getRating(episode.id).then((result) => {
+                                                      setRating(result);
+                                                   });
+                                                   setSelectedRating(i + 1);
+                                                }
+                                             });
+                                          }}
+                                          className={
+                                             selectedRating && selectedRating >= i + 1
+                                                ? "userRating"
+                                                : rating && rating >= i + 1 && rating !== -1
+                                                ? "selectedRating"
+                                                : ""
+                                          }
+                                       />
+                                    ))}
                                  </div>
                               </div>
 

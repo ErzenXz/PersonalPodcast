@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import Podcasts from "./pages/Podcasts";
 import Podcast from "./pages/Podcast";
 import Episode from "./pages/Episode";
+import About from "./pages/About";
+import Episodes from "./pages/Episodes";
 
 const router = createBrowserRouter([
    {
@@ -26,7 +28,7 @@ const router = createBrowserRouter([
    },
    {
       path: "/episodes",
-      element: <div>Episodes</div>,
+      element: <Episodes />,
    },
    {
       path: "/episode/:episodeId",
@@ -34,7 +36,7 @@ const router = createBrowserRouter([
    },
    {
       path: "/about",
-      element: <div>About</div>,
+      element: <About />,
    },
    {
       path: "/account",

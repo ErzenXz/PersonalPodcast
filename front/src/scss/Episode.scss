@@ -41,11 +41,37 @@
                   width: 100%;
                }
 
+               .rate-E {
+                  display: flex;
+                  align-items: center;
+                  gap: 2px;
+                  margin-left: auto;
+
+                  .fa-star {
+                     color: #a7944c;
+                     font-size: 0.9em;
+                     transition: all 0.1s ease-in-out;
+                     cursor: pointer;
+                  }
+
+                  .fa-star:hover {
+                     color: #f39c12;
+                  }
+
+                  .userRating {
+                     color: #f1c40f;
+                  }
+
+                  .selectedRating {
+                     color: #f1c40f;
+                  }
+               }
+
                .audio-E {
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  margin-top: 10px;
+                  margin-top: 30px;
 
                   audio {
                      width: 100%;
@@ -136,19 +162,21 @@
             outline: none;
          }
 
-         button[type="submit"] {
-            width: max-content;
+         button {
             padding: 10px 20px;
             background-color: #292c35;
-            color: #ebecf0;
-            border: none;
+            border: 1px solid #414755;
             border-radius: 5px;
+            color: #ebecf0;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-            outline: none;
+            transition: all 0.3s;
 
             &:hover {
-               background-color: #414755;
+               background-color: #22242c;
+            }
+
+            &:active {
+               transform: scale(0.98);
             }
          }
       }

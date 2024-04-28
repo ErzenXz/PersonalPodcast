@@ -38,7 +38,6 @@ function Homepage() {
    // Change the document title
    document.title = "Home - Mergim Cahani";
 
-   //const [categories, setCategories] = useState<Category[]>([]);
    const [episodes, setEpisodes] = useState<Episode[]>([]);
 
    // Function to navigate to the episode page
@@ -47,7 +46,6 @@ function Homepage() {
    };
 
    useEffect(() => {
-      //getCategories().then(setCategories);
       getEpisodes().then((data) => {
          setEpisodes(data);
       });

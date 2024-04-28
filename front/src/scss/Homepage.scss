@@ -13,7 +13,7 @@
    background-repeat: no-repeat;
    font-family: "Rubik", sans-serif;
    text-align: center;
-
+   animation: popInFromTop 0.5s cubic-bezier(0.19, 1, 0.22, 1) 0ms;
    text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
    color: white;
@@ -279,5 +279,17 @@
    .viewMoreButton a {
       color: #ebecf0;
       text-decoration: none;
+   }
+}
+
+@keyframes popInFromTop {
+   from {
+      transform: translateY(-100%);
+      opacity: 0;
+   }
+
+   to {
+      transform: translateY(0);
+      opacity: 1;
    }
 }
