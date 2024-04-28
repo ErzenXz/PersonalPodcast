@@ -3,30 +3,14 @@ import Mergim from "../assets/mergim.png";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
-//import type Category from "../types/Category";
 import type Episode from "../types/Episode";
-
-// async function getCategories(): Promise<Category[]> {
-//    const headers = new Headers();
-//    headers.append("Content-Type", "application/json");
-
-//    const requestOptions = {
-//       method: "GET",
-//       headers: headers,
-//       redirect: "follow" as RequestRedirect,
-//       credentials: "include" as RequestCredentials,
-//    };
-
-//    return await fetch("https://api.erzen.tk/categories", requestOptions)
-//       .then((response) => response.json())
-//       .then((result: Category[]) => {
-//          return result;
-//       })
-//       .catch((error) => {
-//          console.error("Error:", error);
-//          return []; // Return an empty array in case of an error
-//       });
-// }
+import {
+   checkIfValidTitle,
+   checkIfValidDescription,
+   formatedDate,
+   checkIfValidImageURL,
+   formatLengthToTime,
+} from "../services/formatting_tools";
 
 async function getEpisodes(): Promise<Episode[]> {
    const headers = new Headers();
@@ -50,33 +34,18 @@ async function getEpisodes(): Promise<Episode[]> {
       });
 }
 
-function formatDate(date: string): string {
-   const options = { year: "numeric", month: "long", day: "numeric" };
-   return new Date(date).toLocaleDateString("en-US", options as Intl.DateTimeFormatOptions);
-}
-
-function formatLengthToTime(length: number): string {
-   const minutes = Math.floor(length / 60);
-   const seconds = length % 60;
-   return `${minutes}:${seconds}`;
-}
-
-function checkIfValidImageURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://via.placeholder.com/150";
-   }
-   return url;
-}
-
 function Homepage() {
    // Change the document title
    document.title = "Home - Mergim Cahani";
 
-   //const [categories, setCategories] = useState<Category[]>([]);
    const [episodes, setEpisodes] = useState<Episode[]>([]);
 
+   // Function to navigate to the episode page
+   const goToEpisode = (id: number) => {
+      window.location.href = `/episode/${id}`;
+   };
+
    useEffect(() => {
-      //getCategories().then(setCategories);
       getEpisodes().then((data) => {
          setEpisodes(data);
       });
@@ -99,22 +68,19 @@ function Homepage() {
 
             <div className="episodes">
                {episodes.map((episode) => (
-                  <div key={episode.id} className="episode">
+                  <div key={episode.id} className="episode" onClick={() => goToEpisode(episode.id)}>
                      <div className="info">
-                        <h3>{episode.title}</h3>
-                        <p className="description">{episode.description}</p>
+                        <h3>{checkIfValidTitle(episode.title)}</h3>
+                        <p className="description">
+                           {checkIfValidDescription(episode.description)}
+                        </p>
+
                         <div className="more">
-                           <div className="rating">
-                              <p>Rating: 5/5</p>
-                           </div>
                            <div className="date">
-                              <p>{formatDate(episode.createdDate)}</p>
+                              <p>{formatedDate(episode.createdDate)}</p>
                            </div>
                            <div className="duration">
                               <p>{formatLengthToTime(episode.length)}</p>
-                           </div>
-                           <div className="podcast">
-                              <Link to="/podcast/1" />
                            </div>
                         </div>
                      </div>

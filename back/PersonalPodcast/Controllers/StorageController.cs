@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Permissions;
 using System.Threading.Tasks;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,46 +29,76 @@ namespace PersonalPodcast.Controllers
         {
             try
             {
-                if (file == null || file.Length == 0)
-                    return BadRequest(new { Message = "No file provided.",Code = 55 });
 
-                // Check if the file is img, audio or video if else deny
+                    if (file == null || file.Length == 0)
+                        return BadRequest(new { Message = "No file provided.", Code = 55 });
 
-                if (file.ContentType.Contains("image") || file.ContentType.Contains("audio") || file.ContentType.Contains("video"))
-                {
-                    // Do nothing
-                } else
-                {
-                    return BadRequest( new { Message = "File type not supported. Please upload an image, audio or video file.", Code = 57 });
-                }
+                    if (!file.ContentType.Contains("image") && !file.ContentType.Contains("audio") && !file.ContentType.Contains("video"))
+                    {
+                        return BadRequest(new { Message = "File type not supported. Please upload an image, audio or video file.", Code = 57 });
+                    }
 
-                // Check if the file is too large
+                    var fileExtension = Path.GetExtension(file.FileName);
+                    var s3ObjectKey = Guid.NewGuid().ToString();
+                    var s3ObjectKeyWithExtension = $"{s3ObjectKey}{fileExtension}";
 
-                if (file.Length > 1073741824)
-                {
-                    return BadRequest(new { Message = "File is too large. Max file size is 1GB", Code = 56 });
-                }
+                    var multipartUploadRequest = new InitiateMultipartUploadRequest
+                    {
+                        BucketName = BucketName,
+                        Key = s3ObjectKeyWithExtension
+                    };
 
-                // Generate a unique key for the S3 object (using Guid)
-                var fileExtension = Path.GetExtension(file.FileName);
-                var s3ObjectKey = Guid.NewGuid().ToString();
+                    var initResponse = await _s3Client.InitiateMultipartUploadAsync(multipartUploadRequest);
 
-                var s3ObjectKeyWithExtension = $"{s3ObjectKey}{fileExtension}";
+                    // Split the file into parts and upload each part
+                    var partSize = 5 * 1024 * 1024; // 5 MB
+                    var fileTransferUtility = new TransferUtility(_s3Client);
+                    var uploadResponses = new List<UploadPartResponse>();
 
-                using (var stream = file.OpenReadStream())
-                {
-                    var transferUtility = new TransferUtility(_s3Client);
-                    await transferUtility.UploadAsync(stream, BucketName, s3ObjectKeyWithExtension);
-                }
+                    using (var fileStream = file.OpenReadStream())
+                    {
+                        int partNumber = 1;
+                        for (long i = 0; i < file.Length; i += partSize)
+                        {
+                            var size = Math.Min(partSize, file.Length - i);
+                            var buffer = new byte[size];
+                            await fileStream.ReadAsync(buffer, 0, (int)size);
 
-                var s3ObjectUrl = $"https://{BucketName}.s3.amazonaws.com/{s3ObjectKeyWithExtension}";
-                return Ok(new { Code = 60, Message = "File uploaded successfully!", S3ObjectUrl = s3ObjectUrl });
+                            var uploadRequest = new UploadPartRequest
+                            {
+                                BucketName = BucketName,
+                                Key = s3ObjectKeyWithExtension,
+                                UploadId = initResponse.UploadId,
+                                PartNumber = partNumber++,
+                                PartSize = size,
+                                InputStream = new MemoryStream(buffer)
+                            };
+
+                            var uploadPartResponse = await _s3Client.UploadPartAsync(uploadRequest);
+                            uploadResponses.Add(uploadPartResponse);
+                        }
+                    }
+
+                    // Complete the multipart upload
+                    var completeRequest = new CompleteMultipartUploadRequest
+                    {
+                        BucketName = BucketName,
+                        Key = s3ObjectKeyWithExtension,
+                        UploadId = initResponse.UploadId,
+                        PartETags = uploadResponses.Select(x => new PartETag { PartNumber = x.PartNumber, ETag = x.ETag }).ToList()
+                    };
+
+                    await _s3Client.CompleteMultipartUploadAsync(completeRequest);
+
+                    var s3ObjectUrl = $"https://{BucketName}.s3.amazonaws.com/{s3ObjectKeyWithExtension}";
+                    return Ok(new { Code = 60, Message = "File uploaded successfully!", S3ObjectUrl = s3ObjectUrl });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error uploading file: {ex.Message}");
             }
         }
+
 
         [HttpDelete, Authorize(Roles = "Admin,SuperAdmin")]
         [Route("delete")]

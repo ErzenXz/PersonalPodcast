@@ -1,61 +1,25 @@
 import "../scss/Episode.scss";
 import { useParams } from "react-router-dom";
+import Plyr from "plyr-react";
+import "plyr-react/plyr.css";
 import check_if_logged_in from "../services/is_logged";
 import { useEffect, useState } from "react";
 import type Episode from "../types/Episode";
 import Navigation from "../components/Navigation";
 import type Comment from "../types/Comment";
-
-const formatedDate = (date: string): string => {
-   const d = new Date(date);
-   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-};
-
-function formatLengthToTime(length: number): string {
-   const minutes = Math.floor(length / 60);
-   const seconds = length % 60;
-   return `${minutes}:${seconds}`;
-}
-
-function checkIfValidImageURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://images.unsplash.com/photo-1529641484336-ef35148bab06?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-   }
-   return url;
-}
-
-function checkIfValidAudioURL(url: string): string {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return "https://personal-podcast-life-2.s3.amazonaws.com/72d1dc39-139c-46b2-b39b-72fdfadd6596.mp3";
-   }
-   return url;
-}
-
-function checkIfValidTitle(title: string): string {
-   if (title === null || title === "" || title === undefined || title == "string") {
-      return "No title";
-   }
-   return title;
-}
-
-function checkIfValidDescription(description: string): string {
-   if (
-      description === null ||
-      description === "" ||
-      description === undefined ||
-      description == "string"
-   ) {
-      return "No description";
-   }
-   return description;
-}
-
-function checkIfValidVideoURL(url: string): boolean {
-   if (url === null || url === "" || url === undefined || url == "string") {
-      return false;
-   }
-   return true;
-}
+import {
+   formatLengthToTime,
+   formatedDate,
+   checkIfValidTitle,
+   checkIfValidAudioURL,
+   checkIfValidDescription,
+   checkIfValidImageURL,
+   checkIfValidVideoURL,
+   checkIfVideoOrAudioURL,
+} from "../services/formatting_tools";
+import authenticatorPulse from "../services/authenticatorPulse";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 function checkIfEpisodeExists(episode: Episode): boolean {
    if (
@@ -115,6 +79,63 @@ async function getComments(id: string, page: number = 1): Promise<Comment[] | nu
       });
 }
 
+// Function to get the ratings of the episode
+
+async function getRating(id: number): Promise<number | null> {
+   const headers = new Headers();
+   headers.append("Content-Type", "application/json");
+
+   const requestOptions = {
+      method: "GET",
+      headers: headers,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+   };
+
+   return await fetch(`https://api.erzen.tk/ratings/episode/${id}/average`, requestOptions)
+      .then((response) => response.json())
+      .then((result: number) => {
+         return result;
+      })
+      .catch((error) => {
+         console.error("Error:", error);
+         return null; // Return null in case of an error
+      });
+}
+
+// Function to rate an episode
+
+async function rateEpisode(id: number, rating: number): Promise<boolean> {
+   authenticatorPulse();
+
+   const headers = new Headers();
+   headers.append("Content-Type", "application/json");
+   headers.append("Authorization", `Bearer ${localStorage.getItem("accessToken")}`);
+
+   const requestOptions = {
+      method: "POST",
+      headers: headers,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+      body: JSON.stringify({
+         episodeId: id,
+         userId: JSON.parse(localStorage.getItem("user") || "{}").id,
+         ratingValue: rating,
+         date: new Date().toISOString(),
+      }),
+   };
+
+   return await fetch(`https://api.erzen.tk/ratings`, requestOptions)
+      .then((response) => response.json())
+      .then((result: boolean) => {
+         return result;
+      })
+      .catch((error) => {
+         console.error("Error:", error);
+         return false; // Return false in case of an error
+      });
+}
+
 function Episode() {
    const params = useParams<{ episodeId: string }>();
 
@@ -125,9 +146,10 @@ function Episode() {
    const [loadingComments, setLoadingComments] = useState(true);
    const [comments, setComments] = useState<Comment[]>([]);
    const [page, setPage] = useState(1);
-
    const [textarea, setTextarea] = useState("");
-
+   const [rating, setRating] = useState<number | null>(null);
+   const [ratingLoading, setRatingLoading] = useState(true);
+   const [selectedRating, setSelectedRating] = useState<number | null>(null);
    const maxWords = 100;
 
    useEffect(() => {
@@ -143,6 +165,10 @@ function Episode() {
             getComments(episodeId, page).then((result) => {
                setComments(result || []);
                setLoadingComments(false);
+            });
+            getRating(parseInt(episodeId)).then((result) => {
+               setRating(result);
+               setRatingLoading(false);
             });
          });
       } else {
@@ -232,36 +258,95 @@ function Episode() {
                                  <div className="duration-E">
                                     <p>{formatLengthToTime(episode.length)}</p>
                                  </div>
+
+                                 <div className="rating-E">
+                                    {ratingLoading ? (
+                                       <p>Loading...</p>
+                                    ) : (
+                                       <p>
+                                          {rating && rating !== -1
+                                             ? rating.toFixed(1)
+                                             : "No rating"}
+                                       </p>
+                                    )}
+                                 </div>
+
+                                 <div className="rate-E">
+                                    {Array.from({ length: 5 }, (_, i) => (
+                                       <FontAwesomeIcon
+                                          icon={faStar}
+                                          key={i}
+                                          onClick={() => {
+                                             rateEpisode(episode.id, i + 1).then((result) => {
+                                                if (result) {
+                                                   getRating(episode.id).then((result) => {
+                                                      setRating(result);
+                                                   });
+                                                   setSelectedRating(i + 1);
+                                                }
+                                             });
+                                          }}
+                                          className={
+                                             selectedRating && selectedRating >= i + 1
+                                                ? "userRating"
+                                                : rating && rating >= i + 1 && rating !== -1
+                                                ? "selectedRating"
+                                                : ""
+                                          }
+                                       />
+                                    ))}
+                                 </div>
                               </div>
 
                               <p className="description-E">
                                  {checkIfValidDescription(episode.description)}
                               </p>
-                              <div className="audio-E">
-                                 <audio controls>
-                                    <source
-                                       src={checkIfValidAudioURL(episode.audioFileUrl)}
-                                       type="audio/mpeg"
+                              {checkIfVideoOrAudioURL(
+                                 episode.videoFileUrl,
+                                 episode.audioFileUrl
+                              ) ? (
+                                 <div className="audio-E">
+                                    <Plyr
+                                       source={{
+                                          type: "audio",
+                                          title: checkIfValidTitle(episode.title),
+                                          sources: [
+                                             {
+                                                src: checkIfValidAudioURL(episode.audioFileUrl),
+                                                type: "audio/mp3",
+                                             },
+                                          ],
+                                       }}
                                     />
-                                    Your browser does not support the audio element.
-                                 </audio>
-                              </div>
-
-                              {checkIfValidVideoURL(episode.videoFileUrl) ? (
+                                 </div>
+                              ) : checkIfValidVideoURL(episode.videoFileUrl) ? (
                                  <div className="video-E">
-                                    <video controls>
-                                       <source src={episode.videoFileUrl} type="video/mp4" />
-                                       Your browser does not support the video element.
-                                    </video>
+                                    <Plyr
+                                       source={{
+                                          type: "video",
+                                          title: checkIfValidTitle(episode.title),
+                                          sources: [
+                                             {
+                                                src: episode.videoFileUrl,
+                                                type: "video/mp4",
+                                                size: 720,
+                                             },
+                                          ],
+                                       }}
+                                    />
                                  </div>
                               ) : (
                                  <></>
                               )}
                            </div>
 
-                           <div className="image-E">
-                              <img src={checkIfValidImageURL(episode.posterImg)} alt="Episode" />
-                           </div>
+                           {checkIfVideoOrAudioURL(episode.videoFileUrl, episode.audioFileUrl) ? (
+                              <div className="image-E">
+                                 <img src={checkIfValidImageURL(episode.posterImg)} alt="Episode" />
+                              </div>
+                           ) : (
+                              <></>
+                           )}
                         </div>
                      </div>
                   </div>
