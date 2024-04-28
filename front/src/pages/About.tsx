@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import check_if_logged_in from "../services/is_logged";
 import Navigation from "../components/Navigation";
 import "../scss/About.scss";
