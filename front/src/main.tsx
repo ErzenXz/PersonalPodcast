@@ -7,7 +7,6 @@ import Podcasts from "./pages/Podcasts";
 import Podcast from "./pages/Podcast";
 import Episode from "./pages/Episode";
 import About from "./pages/About";
-import Episodes from "./pages/Episodes";
 
 const router = createBrowserRouter([
    {
@@ -28,7 +27,7 @@ const router = createBrowserRouter([
    },
    {
       path: "/episodes",
-      element: <Episodes />,
+      element: <h1> Episodes </h1>,
    },
    {
       path: "/episode/:episodeId",
