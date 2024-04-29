@@ -9,10 +9,10 @@ import PodcastCreate from "./components/PodcastCreate";
 import EpisodeList from "./components/EpisodeList";
 import EpisodeCreate from "./components/EpisodeCreate";
 import EpisodeEdit from "./components/EpisodeEdit";
-// import ListCategory from "./components/ListCategory";
-// import CreateCategory from "./components/CreateCategory";
-// import EditCategory from "./components/CategoryEdit";
-// import ListUsers from "./components/UsersList";
+import ListCategory from "./components/ListCategory";
+import CreateCategory from "./components/CreateCategory";
+import EditCategory from "./components/CategoryEdit";
+import ListUsers from "./components/UsersList";
 
 // Function to get the accessToken from the localStorage
 
@@ -174,10 +174,10 @@ const App = () => (
          edit={EpisodeEdit}
          show={ShowEpisode}
       />
+      <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
-      {/* <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} /> */}
+      <Resource name="user/all" list={ListUsers} options={{ pagination: { page: 0 } }} />
 
-      {/* <Resource name="user/all" list={ListUsers} options={{ pagination: { page: 0 } }} /> */}
    </Admin>
 );
 
