@@ -4,6 +4,58 @@ import Navigation from "../components/Navigation";
 import Modal from "../components/Modal"; // A new component for the popup
 import "../scss/Account.scss";
 
+// Function to update the password
+async function updatePassword(oldPassword: string, newPassword: string) {
+   const headers = new Headers();
+   headers.append("Content-Type", "application/json");
+
+   const user = JSON.parse(localStorage.getItem("user")!);
+   const email = user.email;
+
+   const requestOptions = {
+      method: "POST",
+      headers: headers,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+      body: JSON.stringify({ email, oldPassword, newPassword }),
+   };
+
+   return await fetch(`https://api.erzen.tk/auth/change-password`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+         return result;
+      })
+      .catch((error) => {
+         console.error("Error:", error);
+         return { error: true }; // Return an empty array in case of an error
+      });
+}
+
+// Function to log out
+async function logOUT() {
+   const headers = new Headers();
+   headers.append("Content-Type", "application/json");
+
+   const requestOptions = {
+      method: "GET",
+      headers: headers,
+      redirect: "follow" as RequestRedirect,
+      credentials: "include" as RequestCredentials,
+   };
+
+   return await fetch(`https://api.erzen.tk/auth/logout`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+         if (result.message === "User logged out successfully!") {
+            localStorage.removeItem("user");
+            window.location.href = "/login";
+         }
+      })
+      .catch((error) => {
+         console.error("Error:", error);
+      });
+}
+
 function Account() {
    // Change the document title
    document.title = "Account - Mergim Cahani";
@@ -17,6 +69,9 @@ function Account() {
       role: "",
       id: 0,
    });
+
+   const [oldPassword, setOldPassword] = useState("");
+   const [newPassword, setNewPassword] = useState("");
 
    useEffect(() => {
       const user2 = JSON.parse(localStorage.getItem("user")!);
@@ -54,14 +109,56 @@ function Account() {
             {showModal && (
                <Modal onClose={() => setShowModal(false)}>
                   <h2>Update Password</h2>
-                  <form>
-                     <input type="password" placeholder="Old Password" required />
-                     <input type="password" placeholder="New Password" required />
-                     <input type="password" placeholder="Confirm New Password" required />
-                     <button type="submit">Update</button>
-                  </form>
+                  <input
+                     type="password"
+                     placeholder="Old Password"
+                     value={oldPassword}
+                     onChange={(e) => setOldPassword(e.target.value)}
+                     required
+                  />
+                  <input
+                     type="password"
+                     placeholder="Old Password"
+                     value={newPassword}
+                     onChange={(e) => setNewPassword(e.target.value)}
+                     required
+                  />
+                  <button
+                     onClick={() => {
+                        updatePassword(oldPassword, newPassword).then((data) => {
+                           if (data.error) {
+                              alert("An error occurred while updating the password.");
+                           } else if (
+                              data.Message ===
+                                 "Email, old password and new password are required." ||
+                              data.Message === "Email must be between 5 and 100 characters." ||
+                              data.Message ===
+                                 "Old password must be between 8 and 100 characters." ||
+                              data.Message ===
+                                 "New password must be between 8 and 100 characters." ||
+                              data.Message === "User not found." ||
+                              data.Message === "Invalid password."
+                           ) {
+                              alert(data.Message);
+                           } else {
+                              alert("Password updated successfully.");
+                           }
+                        });
+                     }}
+                  >
+                     Update Password
+                  </button>
                </Modal>
             )}
+
+            {/* Log out button */}
+            <button
+               onClick={() => {
+                  logOUT();
+               }}
+            >
+               Log Out
+            </button>
          </div>
       </>
    );
