@@ -48,8 +48,8 @@ const authProvider = {
             }
             return response.json();
          })
-         .then(({ token }) => {
-            localStorage.setItem("accessToken", token);
+         .then(({ accessToken }) => {
+            localStorage.setItem("accessToken", accessToken);
             const expireIn15Mins = new Date(Date.now() + 15 * 60000);
             localStorage.setItem("tokenExpireDate", expireIn15Mins.toISOString());
          });
@@ -105,7 +105,7 @@ const authProvider = {
          credentials: "include" as RequestCredentials,
          headers: new Headers({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include the token
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
          }),
       });
       return fetch(request)
@@ -130,7 +130,6 @@ const authProvider = {
          credentials: "include" as RequestCredentials,
          headers: new Headers({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include the token
          }),
       });
       return fetch(request)
