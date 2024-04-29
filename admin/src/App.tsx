@@ -183,7 +183,7 @@ const App = () => (
       <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
       <Resource
-         name="user"
+         name="users"
          list={ListUsers}
          options={{ pagination: { page: 0 } }}
          edit={UsersEdit}
