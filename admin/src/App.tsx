@@ -39,6 +39,8 @@ const authProvider = {
    login: async ({ username, password }: { username: string; password: string }) => {
       const request = new Request("https://api.erzen.tk/auth/login", {
          method: "POST",
+         redirect: "follow" as RequestRedirect,
+         credentials: "include" as RequestCredentials,
          body: JSON.stringify({ email: username, password }),
          headers: new Headers({ "Content-Type": "application/json" }),
       });
@@ -94,8 +96,8 @@ const authProvider = {
       // If the token is not about to expire, proceed with the regular check
       const request = new Request("https://api.erzen.tk/auth/info", {
          method: "GET",
-         redirect: "follow",
-         credentials: "include",
+         redirect: "follow" as RequestRedirect,
+         credentials: "include" as RequestCredentials,
          headers: new Headers({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
