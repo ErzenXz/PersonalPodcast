@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Allow CORS
+// Allow CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MySpecificOrigins", builder =>
@@ -22,12 +23,14 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("https://personalpodcast.erzen.tk",
                             "https://personalpodcast.erzen.xyz",
                             "http://localhost:5173",
-                            "https://personalpodcast.pages.dev/") 
+                            "https://personalpodcast.pages.dev/")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials();
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Range");
     });
 });
+
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -47,7 +50,6 @@ builder.Services.AddSwaggerGen(options =>
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
-
 
 builder.Services.AddAuthentication().AddJwtBearer(options =>
 {
@@ -84,7 +86,6 @@ builder.Services.AddDbContext<DBContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
-
 
 var app = builder.Build();
 
