@@ -15,6 +15,7 @@ import EditCategory from "./components/CategoryEdit";
 import ListUsers from "./components/UsersList";
 import ListComments from "./components/ListComments";
 
+
 // Function to get the accessToken from the localStorage
 
 const getAccessToken = () => localStorage.getItem("accessToken");
@@ -178,6 +179,7 @@ const App = () => (
       />
       <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
+
       <Resource
          name="user/all"
          list={ListUsers}
@@ -186,6 +188,7 @@ const App = () => (
       />
 
       <Resource name="comments" list={ListComments} />
+
    </Admin>
 );
 
