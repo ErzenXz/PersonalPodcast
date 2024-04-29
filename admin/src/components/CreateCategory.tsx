@@ -6,7 +6,7 @@ interface PodcastCreateProps {
 
 export const CreateCategory = (props: PodcastCreateProps) => {
    return (
-      <Create title="Create a Episode" {...props}>
+      <Create title="Create a Category" {...props}>
          <SimpleForm>
             <TextInput source="name" />
          </SimpleForm>
