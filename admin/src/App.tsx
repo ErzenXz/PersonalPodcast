@@ -36,26 +36,26 @@ const httpClient = (url: string, options: Options = { headers: new Headers() }) 
 };
 
 const authProvider = {
-   login: ({ username, password }: { username: string; password: string }) => {
+   login: async ({ username, password }: { username: string; password: string }) => {
       const request = new Request("https://api.erzen.tk/auth/login", {
          method: "POST",
          body: JSON.stringify({ email: username, password }),
          headers: new Headers({ "Content-Type": "application/json" }),
       });
-      return fetch(request)
-         .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-               throw new Error(response.statusText);
-            }
-            return response.json();
-         })
-         .then(({ accessToken }) => {
-            localStorage.setItem("accessToken", accessToken);
-            const expireIn15Mins = new Date(Date.now() + 15 * 60000);
-            localStorage.setItem("tokenExpireDate", expireIn15Mins.toISOString());
-         });
+      try {
+         const response = await fetch(request);
+         if (response.status < 200 || response.status >= 300) {
+            throw new Error(response.statusText);
+         }
+         const { accessToken } = await response.json();
+         localStorage.setItem("accessToken", accessToken);
+         const expireIn15Mins = new Date(Date.now() + 15 * 60000);
+         localStorage.setItem("tokenExpireDate", expireIn15Mins.toISOString());
+      } catch (error) {
+         throw new Error("Login failed");
+      }
    },
-   logout: () => {
+   logout: async () => {
       const request = new Request("https://api.erzen.tk/auth/logout", {
          method: "POST",
          redirect: "follow" as RequestRedirect,
@@ -65,15 +65,17 @@ const authProvider = {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include the token
          }),
       });
-      return fetch(request).then(() => {
+      try {
+         await fetch(request);
          localStorage.removeItem("accessToken"); // Remove the token after logging out
-         return Promise.resolve();
-      });
+      } catch (error) {
+         throw new Error("Logout failed");
+      }
    },
-   checkError: () => {
-      return Promise.reject();
+   checkError: async () => {
+      throw new Error("Error occurred");
    },
-   checkAuth: () => {
+   checkAuth: async () => {
       const token = localStorage.getItem("accessToken");
       const tokenExpireDate = localStorage.getItem("tokenExpireDate")
          ? new Date(localStorage.getItem("tokenExpireDate")!)
@@ -81,8 +83,12 @@ const authProvider = {
 
       // Check if the token is about to expire in the next minute
       if (token && new Date() > new Date(tokenExpireDate.getTime() - 1 * 60000)) {
-         // Refresh the tokenn
-         return refreshToken().then(() => Promise.resolve());
+         // Refresh the token
+         try {
+            await refreshToken();
+         } catch (error) {
+            throw new Error("Token refresh failed");
+         }
       }
 
       // If the token is not about to expire, proceed with the regular check
@@ -96,23 +102,18 @@ const authProvider = {
          }),
       });
 
-      return fetch(request)
-         .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-               throw new Error(response.statusText);
-            }
-            authenticatorPulse();
-            return response.json();
-         })
-         .then(() => {
-            return Promise.resolve();
-         })
-         .catch(() => {
-            localStorage.removeItem("accessToken");
-            return Promise.reject();
-         });
+      try {
+         const response = await fetch(request);
+         if (response.status < 200 || response.status >= 300) {
+            throw new Error(response.statusText);
+         }
+         authenticatorPulse();
+      } catch (error) {
+         localStorage.removeItem("accessToken");
+         throw new Error("Authentication failed");
+      }
    },
-   getPermissions: () => {
+   getPermissions: async () => {
       const request = new Request("https://api.erzen.tk/stats", {
          method: "GET",
          redirect: "follow" as RequestRedirect,
@@ -122,22 +123,22 @@ const authProvider = {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
          }),
       });
-      return fetch(request)
-         .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-               throw new Error(response.statusText);
-            }
-            return response.json();
-         })
-         .then((data) => {
-            if (data) {
-               return "admin";
-            } else {
-               return "user";
-            }
-         });
+      try {
+         const response = await fetch(request);
+         if (response.status < 200 || response.status >= 300) {
+            throw new Error(response.statusText);
+         }
+         const data = await response.json();
+         if (data) {
+            return "admin";
+         } else {
+            return "user";
+         }
+      } catch (error) {
+         throw new Error("Failed to get permissions");
+      }
    },
-   getInfo: () => {
+   getInfo: async () => {
       const request = new Request("https://api.erzen.tk/auth/info", {
          method: "GET",
          redirect: "follow" as RequestRedirect,
@@ -146,22 +147,22 @@ const authProvider = {
             "Content-Type": "application/json",
          }),
       });
-      return fetch(request)
-         .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-               throw new Error(response.statusText);
-            }
-            return response.json();
-         })
-         .then((data) => {
-            return {
-               fullName: data.fullName,
-               username: data.username,
-               email: data.email,
-               role: data.role,
-               id: data.id,
-            };
-         });
+      try {
+         const response = await fetch(request);
+         if (response.status < 200 || response.status >= 300) {
+            throw new Error(response.statusText);
+         }
+         const data = await response.json();
+         return {
+            fullName: data.fullName,
+            username: data.username,
+            email: data.email,
+            role: data.role,
+            id: data.id,
+         };
+      } catch (error) {
+         throw new Error("Failed to get user info");
+      }
    },
 };
 
