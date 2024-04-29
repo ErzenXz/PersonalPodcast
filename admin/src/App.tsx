@@ -15,7 +15,6 @@ import EditCategory from "./components/CategoryEdit";
 import ListUsers from "./components/UsersList";
 import ListComments from "./components/ListComments";
 
-
 // Function to get the accessToken from the localStorage
 
 const getAccessToken = () => localStorage.getItem("accessToken");
@@ -25,6 +24,7 @@ import PodcastEdit from "./components/PodcastEdit";
 import ShowEpisode from "./components/ShowEpisode";
 import authenticatorPulse from "./service/authenticatorPulse";
 import UsersEdit from "./components/UsersEdit";
+import refreshToken from "./service/refresh_token";
 
 const httpClient = (url: string, options: Options = { headers: new Headers() }) => {
    if (!options.headers) {
@@ -74,15 +74,28 @@ const authProvider = {
       return Promise.reject();
    },
    checkAuth: () => {
+      const token = localStorage.getItem("accessToken");
+      const tokenExpireDate = localStorage.getItem("tokenExpireDate")
+         ? new Date(localStorage.getItem("tokenExpireDate")!)
+         : new Date();
+
+      // Check if the token is about to expire in the next minute
+      if (token && new Date() > new Date(tokenExpireDate.getTime() - 1 * 60000)) {
+         // Refresh the tokenn
+         return refreshToken().then(() => Promise.resolve());
+      }
+
+      // If the token is not about to expire, proceed with the regular check
       const request = new Request("https://api.erzen.tk/auth/info", {
          method: "GET",
-         redirect: "follow" as RequestRedirect,
-         credentials: "include" as RequestCredentials,
+         redirect: "follow",
+         credentials: "include",
          headers: new Headers({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${token}`,
          }),
       });
+
       return fetch(request)
          .then((response) => {
             if (response.status < 200 || response.status >= 300) {
@@ -178,7 +191,6 @@ const App = () => (
       />
       <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
-
       <Resource
          name="user/all"
          list={ListUsers}
@@ -187,7 +199,6 @@ const App = () => (
       />
 
       <Resource name="comments" list={ListComments} />
-
    </Admin>
 );
 
