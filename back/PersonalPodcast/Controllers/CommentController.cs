@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PersonalPodcast.Data;
 using PersonalPodcast.DTO;
 using PersonalPodcast.Models;
+using PersonalPodcast.Services;
 using System;
 using System.Security.Claims;
 
@@ -94,12 +95,16 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet("episodes/{episodeId}")]
-        public async Task<IActionResult> GetCommentsByEpisodeId(int episodeId, int page = 1)
+        public async Task<IActionResult> GetCommentsByEpisodeId(int episodeId, int page = 1, string? range = null)
         {
+            // Parse the range query parameter
+
+            var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
+
             var comments = await _dbContext.comments
                 .Where(c => c.EpisodeId == episodeId)
                 .OrderByDescending(c => c.Date)
-                .Skip((page - 1) * 10)
+                .Skip((queryParams.Page - 1) * 10)
                 .Take(10)
                 .Select(c => new CommentResponse
                 {
@@ -124,16 +129,20 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllComments(int page = 1)
+        public async Task<IActionResult> GetAllComments(int page = 1, string? range = null)
         {
             if (page < 1)
             {
                 return BadRequest(new{ Message = "Invalid page number.", Code = 11 });
             }
 
+            // Parse the range query parameter
+
+            var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
+
             var comments = await _dbContext.comments
                 .OrderByDescending(c => c.Date)
-                .Skip((page - 1) * 10)
+                .Skip((queryParams.Page - 1) * 10)
                 .Take(10)
                 .Select(c => new CommentResponse
                 {

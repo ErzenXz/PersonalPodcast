@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using PersonalPodcast.Data;
 using PersonalPodcast.Models;
+using PersonalPodcast.Services;
 using System.Security.Cryptography;
 
 namespace PersonalPodcast.Controllers
@@ -95,12 +96,17 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet("all"), Authorize(Roles = "Admin,SuperAdmin")]
-        public async IAsyncEnumerable<User> GetAllUsers(int page = 1)
+        public async IAsyncEnumerable<User> GetAllUsers(int page = 1, string? range = null)
         {
-            var users = _dBContext.Users.Skip((page - 1) * 10).Take(10).AsAsyncEnumerable();
-            
+            // Parse the range query parameter
+
+            var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
+
+            var users = _dBContext.Users.Skip((queryParams.Page - 1) * 10).Take(10).AsAsyncEnumerable();
+
             // Add Content-Range header
-            Response.Headers.Add("Content-Range", $"users {page * 10}-{(page * 10) + 10}/{_dBContext.Users.Count()}");
+            Response.Headers.Add("Content-Range", $"users {queryParams.Page * 10}-{(queryParams.Page * 10) + 10}/{_dBContext.Users.Count()}");
+
 
             await foreach (var user in users)
             {
