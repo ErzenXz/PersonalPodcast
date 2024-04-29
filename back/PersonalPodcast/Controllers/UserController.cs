@@ -102,10 +102,10 @@ namespace PersonalPodcast.Controllers
 
             var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
 
-            var users = _dBContext.Users.Skip((queryParams.Page - 1) * 10).Take(10).AsAsyncEnumerable();
+            var users = _dBContext.Users.Skip((queryParams.Page - 1) * queryParams.PerPage).Take(queryParams.PerPage).AsAsyncEnumerable();
 
             // Add Content-Range header
-            Response.Headers.Add("Content-Range", $"users {queryParams.Page * 10}-{(queryParams.Page * 10) + 10}/{_dBContext.Users.Count()}");
+            Response.Headers.Add("Content-Range", $"users {queryParams.Page * queryParams.PerPage}-{(queryParams.Page * queryParams.PerPage) + queryParams.PerPage}/{_dBContext.Users.Count()}");
 
 
             await foreach (var user in users)
