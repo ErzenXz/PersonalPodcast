@@ -8,8 +8,8 @@
         // SMTP server details
         private const string SmtpServer = "smtp-relay.brevo.com";
         private const int SmtpPort = 587;
-        private const string SmtpUsername = "njnana2017@gmail.com";
-        private const string SmtpPassword = "0x9DInWLh3F872U1";
+        private const string SmtpUsername = "erzen.krasniqi4@student.uni-pr.edu";
+        private const string SmtpPassword = "w61nIpPZYd3AWSzk";
 
         public static bool SendEmail(string fromAddress, string toAddress, string subject, string body)
         {
