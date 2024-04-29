@@ -10,10 +10,10 @@
       "preview": "vite preview"
    },
    "dependencies": {
+      "ra-data-simple-rest": "^4.16.16",
       "react": "^18.2.0",
       "react-admin": "^4.16.16",
-      "react-dom": "^18.2.0",
-      "ra-data-simple-rest": "^4.16.16"
+      "react-dom": "^18.2.0"
    },
    "devDependencies": {
       "@types/react": "^18.2.66",
@@ -27,5 +27,4 @@
       "typescript": "^5.2.2",
       "vite": "^5.2.0"
    }
-
 }
