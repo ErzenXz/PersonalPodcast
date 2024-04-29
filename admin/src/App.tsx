@@ -13,6 +13,8 @@ import ListCategory from "./components/ListCategory";
 import CreateCategory from "./components/CreateCategory";
 import EditCategory from "./components/CategoryEdit";
 import ListUsers from "./components/UsersList";
+import ListComments from "./components/ListComments";
+
 
 // Function to get the accessToken from the localStorage
 
@@ -22,6 +24,7 @@ import { Options } from "ra-core";
 import PodcastEdit from "./components/PodcastEdit";
 import ShowEpisode from "./components/ShowEpisode";
 import authenticatorPulse from "./service/authenticatorPulse";
+import UsersEdit from "./components/UsersEdit";
 
 const httpClient = (url: string, options: Options = { headers: new Headers() }) => {
    if (!options.headers) {
@@ -176,7 +179,15 @@ const App = () => (
       />
       <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
-      <Resource name="user/all" list={ListUsers} options={{ pagination: { page: 0 } }} />
+
+      <Resource
+         name="user/all"
+         list={ListUsers}
+         options={{ pagination: { page: 0 } }}
+         edit={UsersEdit}
+      />
+
+      <Resource name="comments" list={ListComments} />
 
    </Admin>
 );
