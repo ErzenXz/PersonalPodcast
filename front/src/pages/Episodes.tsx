@@ -135,12 +135,13 @@ function Episodes() {
                            if (search.trim() !== "") {
                               setSearching(true);
                               setSearchPage(1);
-                              searchEpisodes(search, searchPage).then((data) => {
+                              searchEpisodes(search, 1).then((data) => {
                                  setEpisodes(data);
                                  setEpisodesLoaded(true);
                               });
                            } else {
                               setSearching(false);
+                              setPage(1);
                            }
                         }}
                      >
