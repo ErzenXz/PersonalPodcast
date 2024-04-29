@@ -97,8 +97,8 @@ namespace PersonalPodcast.Controllers
         [HttpGet("all"), Authorize(Roles = "Admin,SuperAdmin")]
         public async IAsyncEnumerable<User> GetAllUsers(int page = 1)
         {
-            var users = _dBContext.Users.Skip(page * 10).Take(10).AsAsyncEnumerable();
-
+            var users = _dBContext.Users.Skip((page - 1) * 10).Take(10).AsAsyncEnumerable();
+            
             // Add Content-Range header
             Response.Headers.Add("Content-Range", $"users {page * 10}-{(page * 10) + 10}/{_dBContext.Users.Count()}");
 
