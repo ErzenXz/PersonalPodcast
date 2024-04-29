@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PersonalPodcast.Data;
 using PersonalPodcast.DTO;
 using PersonalPodcast.Models;
+using PersonalPodcast.Services;
 
 namespace PersonalPodcast.Controllers
 {
@@ -50,6 +52,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Episode created successfully: {EpisodeId}", episode.Id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"episodes 0-1/1");
+
                 return CreatedAtAction(nameof(GetEpisode), new { id = episode.Id }, episode);
             }
             catch (Exception ex)
@@ -88,6 +93,10 @@ namespace PersonalPodcast.Controllers
                     LastUpdate = episode.LastUpdate
 
                 };
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"episodes 0-1/1");
+
                 return Ok(episodeResponse);
             }
             catch (Exception ex)
@@ -98,19 +107,24 @@ namespace PersonalPodcast.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEpisodes(int page = 1)
+        public async Task<IActionResult> GetAllEpisodes(int page = 1, int perPage = 10, string? range = null)
         {
             if (page < 1)
             {
                 return BadRequest(new { Message = "Invalid page number.", Code = 11 });
             }
 
+            // Parse the range query parameter
+
+            var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
+
+
             try
             {
                 var episodes = await _dBContext.Episodes
                     .OrderByDescending(c => c.CreatedDate)
-                    .Skip((page - 1) * 10)
-                    .Take(10)
+                    .Skip((queryParams.Page - 1) * queryParams.PerPage)
+                    .Take(queryParams.PerPage)
                     .Select(c => new EpisodeResponse
                     {
                         Id = c.Id,
@@ -129,6 +143,11 @@ namespace PersonalPodcast.Controllers
                     })
                     .ToListAsync();
 
+
+                // Add Content-Range header
+                int totalEpisodes = _dBContext.Episodes.Count();
+                Response.Headers.Add("Content-Range", $"episodes {((page - 1) * perPage)}-{Math.Min(page * perPage, totalEpisodes)}/{totalEpisodes}");
+
                 return Ok(episodes);
             }
             catch (Exception ex)
@@ -138,8 +157,9 @@ namespace PersonalPodcast.Controllers
             }
         }
 
+
         [HttpGet("search")]
-        public async Task<IActionResult> SearchEpisodes(string query, int page = 1)
+        public async Task<IActionResult> SearchEpisodes(string query, int page = 1, int perPage = 10)
         {
             if (page < 1)
             {
@@ -156,8 +176,8 @@ namespace PersonalPodcast.Controllers
                 var episodes = await _dBContext.Episodes
                     .Where(c => c.Title.Contains(query) || c.Tags.Contains(query) || c.Description.Contains(query))
                     .OrderByDescending(c => c.CreatedDate)
-                    .Skip((page - 1) * 10)
-                    .Take(10)
+                    .Skip((page - 1) * perPage)
+                    .Take(perPage)
                     .Select(c => new EpisodeResponse
                     {
                         Id = c.Id,
@@ -175,6 +195,9 @@ namespace PersonalPodcast.Controllers
                         LastUpdate = c.LastUpdate
                     })
                     .ToListAsync();
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"episodes {((page - 1) * perPage)}-{page * perPage}/{_dBContext.Episodes.Count()}");
 
                 return Ok(episodes);
             }
@@ -214,6 +237,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Episode with Id {EpisodeId} updated successfully", id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"episodes 0-1/1");
+
                 return Ok(new { Message = "Podcast updated successfully.", Code = 89 });
             }
             catch (Exception ex)
@@ -241,6 +267,10 @@ namespace PersonalPodcast.Controllers
                 await _dBContext.SaveChangesAsync();
 
                 _logger.LogInformation($"Episode with Id {id} deleted successfully", id);
+
+                // Add Content-Range header
+
+                Response.Headers.Add("Content-Range", $"episodes 0-1/1");
 
                 return Ok(new { Message = "Podcast deleted successfully.", Code = 90 });
 

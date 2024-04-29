@@ -38,6 +38,9 @@ namespace PersonalPodcast.Controllers
 
             _logger.LogInformation("User request for " + id + " has been successful!");
 
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return user;
             
         }
@@ -55,6 +58,11 @@ namespace PersonalPodcast.Controllers
             }
 
             _logger.LogInformation("User request for " + username + " has been successful!");
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
+
             return user;
         }
 
@@ -67,6 +75,9 @@ namespace PersonalPodcast.Controllers
             {
                return null;
             }
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
  
             return user;
 
@@ -87,6 +98,10 @@ namespace PersonalPodcast.Controllers
         public async IAsyncEnumerable<User> GetAllUsers(int page = 1)
         {
             var users = _dBContext.Users.Skip(page * 10).Take(10).AsAsyncEnumerable();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users {page * 10}-{(page * 10) + 10}/{_dBContext.Users.Count()}");
+
             await foreach (var user in users)
             {
                 yield return user;
@@ -97,7 +112,6 @@ namespace PersonalPodcast.Controllers
         [HttpPut("update"),Authorize(Roles ="User,Admin,SuperAdmin")]
         public async Task<IActionResult> UpdateUser(string username, string fullname, string email, string newPassword, DateTime lastlogin, DateTime firstlogin, string conIP, DateTime birthday)
         {
-
 
             var refreshToken = Request.Cookies["refreshToken"];
 
@@ -137,6 +151,9 @@ namespace PersonalPodcast.Controllers
 
             SetCookies(refreshToken);
 
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "User updated successfully.", Code = 79 });
         }    
 
@@ -160,6 +177,10 @@ namespace PersonalPodcast.Controllers
 
             user1.LastLogin = DateTime.UtcNow;
             await _dBContext.SaveChangesAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "Last login updated successfully.", Code = 80 });
         }
 
@@ -183,6 +204,10 @@ namespace PersonalPodcast.Controllers
 
             user1.ConnectingIp = HttpContext.Connection.RemoteIpAddress.ToString();
             await _dBContext.SaveChangesAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "Connecting IP updated successfully.", Code = 81 });
         }
 
@@ -215,6 +240,10 @@ namespace PersonalPodcast.Controllers
 
             user.Birthdate = newBirthDay;
             await _dBContext.SaveChangesAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "Birthdate updated successfully.", Code = 84 });
         }
 
@@ -244,6 +273,10 @@ namespace PersonalPodcast.Controllers
 
             user.Username = newUsername;
             await _dBContext.SaveChangesAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "Username updated successfully.", Code = 82 });
 
         }
@@ -269,6 +302,10 @@ namespace PersonalPodcast.Controllers
 
             user.FullName = newName;
             await _dBContext.SaveChangesAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "Full name updated successfully.", Code = 83 });
         }
 
@@ -295,6 +332,10 @@ namespace PersonalPodcast.Controllers
             }
             _dBContext.Users.Remove(user);
             await _dBContext.SaveChangesAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"users 0-0/1");
+
             return Ok(new { Message = "User deleted successfully.", Code = 400 });
         }
 

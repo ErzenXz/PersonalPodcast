@@ -38,6 +38,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation($"Category created successfully: {category.Id}", category.Id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"categories 0-0/1");
+
                 return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
             }
             catch (Exception ex)
@@ -65,6 +68,9 @@ namespace PersonalPodcast.Controllers
                     Name = category.Name
                 };
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"categories 0-0/1");
+
                 return Ok(categoryResponse);
             }
             catch (Exception ex)
@@ -86,6 +92,9 @@ namespace PersonalPodcast.Controllers
                         Name = c.Name
                     })
                     .ToListAsync();
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"categories 0-{categories.Count() - 1}/{categories.Count()}");
 
                 return Ok(categories);
             }

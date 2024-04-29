@@ -92,6 +92,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Rating created successfully: {RatingId}", rating.Id);
 
+                 // Add Content-Range header
+                 Response.Headers.Add("Content-Range", $"ratings 0-0/1");
+
                 return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, ratingResponse2);
                 
                 }
@@ -123,6 +126,9 @@ namespace PersonalPodcast.Controllers
                 Date = rating.Date
             };
 
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"ratings 0-0/1");
+
             return Ok(ratingResponse);
         }
 
@@ -144,6 +150,9 @@ namespace PersonalPodcast.Controllers
                 Date = r.Date
             }).ToListAsync();
 
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"ratings 0-{ratings.Count() - 1}/{ratings.Count()}");
+
             return Ok(ratings);
         }
 
@@ -163,6 +172,9 @@ namespace PersonalPodcast.Controllers
                 }
 
                 double averageRating = episodeRatings.Average();
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"ratings 0-0/1");
                 return Ok(averageRating);
             }
             catch (Exception ex)
@@ -201,6 +213,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Rating with Id {RatingId} updated successfully", id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"ratings 0-0/1");
+
                 return Ok(new { Message = "Rating updated successfully.", Code = 85 });
             }
             catch (Exception ex)
@@ -227,6 +242,9 @@ namespace PersonalPodcast.Controllers
                 await _dBContext.SaveChangesAsync();
 
                 _logger.LogInformation("Rating with Id {RatingId} deleted successfully", id);
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"ratings 0-0/1");
 
                 return Ok(new { Message = "Rating deleted successfully.", Code = 86 });
             }

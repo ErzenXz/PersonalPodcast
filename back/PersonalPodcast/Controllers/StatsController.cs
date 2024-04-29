@@ -39,6 +39,9 @@ namespace PersonalPodcast.Controllers
                     .CountAsync()
             };
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"stats 0-0/1");
+
                 return Ok(stats);
             }
             catch (Exception ex)
@@ -64,6 +67,9 @@ namespace PersonalPodcast.Controllers
 
                 episode.Views += 1;
                 await _dBContext.SaveChangesAsync();
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"episodes 0-0/1");
 
                 return Ok(new {Message = "View count updated successfully", Code= 97 });
             }

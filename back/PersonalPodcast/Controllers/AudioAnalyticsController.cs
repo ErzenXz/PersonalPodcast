@@ -84,6 +84,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Audio analytics created successfully: {AudioAnalyticsId}", audioAnalytics.Id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"audioAnalytics 0-0/1");
+
                 return CreatedAtAction(nameof(GetAudioAnalytics), new { id = audioAnalytics.Id }, audioAnalyticsResponse);
             }
             catch (Exception ex)
@@ -116,6 +119,9 @@ namespace PersonalPodcast.Controllers
                     Length = audioAnalytics.Length
                 };
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"audioAnalytics 0-0/1");
+
                 return Ok(audioAnalyticsResponse);
             }
             catch (Exception ex)
@@ -146,6 +152,9 @@ namespace PersonalPodcast.Controllers
                     LastPlay = a.LastPlay,
                     Length = a.Length
                 }).ToListAsync();
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"audioAnalytics 0-{audioAnalyticsList.Count() - 1}/{audioAnalyticsList.Count()}");
 
                 return Ok(audioAnalyticsList);
             }
@@ -179,6 +188,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Audio analytics with Id {AudioAnalyticsId} updated successfully", id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"audioAnalytics 0-0/1");
+
                 return Ok(new { Message = "Audio Analytics updated successfully.", Code = 95 });
             }
             catch (Exception ex)
@@ -204,6 +216,9 @@ namespace PersonalPodcast.Controllers
                 await _dBContext.SaveChangesAsync();
 
                 _logger.LogInformation("Audio analytics with Id {AudioAnalyticsId} deleted successfully", id);
+
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"audioAnalytics 0-0/1");
 
                 return Ok(new { Message = " Audio Analytics deleted successfully.", Code = 96 });
             }
@@ -233,6 +248,9 @@ namespace PersonalPodcast.Controllers
                         .Take(10)
                         .ToListAsync();
 
+                    // Add Content-Range header
+                    Response.Headers.Add("Content-Range", $"episodes 0-{randomEpisodes.Count - 1}/{randomEpisodes.Count}");
+
                     return Ok(randomEpisodes);
                 } else
                 {
@@ -252,6 +270,9 @@ namespace PersonalPodcast.Controllers
                             .ToListAsync();
 
                         _logger.LogWarning("No audio analytics found for user with Id {UserId}", user.Id);
+
+                        // Add Content-Range header
+                        Response.Headers.Add("Content-Range", $"episodes 0-{randomEpisodes.Count - 1}/{randomEpisodes.Count}");
                         return Ok(randomEpisodes);
                     //return NotFound(new { Message = $"No audio analytics found for user with Id {user.Id}", Code = 65 });
                 }
@@ -274,6 +295,9 @@ namespace PersonalPodcast.Controllers
                             .ToListAsync();
 
                         _logger.LogWarning("No tags with watch time found for user with Id {UserId}", user.Id);
+
+                        // Add Content-Range header
+                        Response.Headers.Add("Content-Range", $"episodes 0-{randomEpisodes.Count - 1}/{randomEpisodes.Count}");
                         return Ok(randomEpisodes);
 
                     //return NotFound(new { Message = $"No tags with watch time found for user with Id {user.Id}", Code = 66 });
@@ -287,6 +311,8 @@ namespace PersonalPodcast.Controllers
                     .Where(e => e.Tags != null && e.Tags.Split(new char[] { ',' }, StringSplitOptions.None).Any(tag => topTags.Contains(tag)))
                     .ToListAsync();
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"episodes 0-{recommendedEpisodes.Count - 1}/{recommendedEpisodes.Count}");
 
                 return Ok(recommendedEpisodes);
                 }

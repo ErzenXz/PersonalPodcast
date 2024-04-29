@@ -56,6 +56,9 @@ namespace PersonalPodcast.Controllers
 
                 _logger.LogInformation("Comment created successfully: {CommentId}", comment.Id);
 
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"comments 0-0/1");
+
                 return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, commentResponse);
             }
             catch (Exception ex)
@@ -84,6 +87,9 @@ namespace PersonalPodcast.Controllers
                 Message = comment.Message,
             };
 
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"comments 0-0/1");
+
             return Ok(commentResponse);
         }
 
@@ -111,6 +117,9 @@ namespace PersonalPodcast.Controllers
                 return NotFound(new {Message = $"No comments found for EpisodeId {episodeId}.", Code = 63});
             }
 
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"comments 0-{comments.Count() - 1}/{comments.Count()}");
+
             return Ok(comments);
         }
 
@@ -135,6 +144,9 @@ namespace PersonalPodcast.Controllers
                     Message = c.Message
                 })
                 .ToListAsync();
+
+            // Add Content-Range header
+            Response.Headers.Add("Content-Range", $"comments 0-{comments.Count() - 1}/{comments.Count()}");
 
             return Ok(comments); 
         }
@@ -172,6 +184,8 @@ namespace PersonalPodcast.Controllers
                 _dbContext.comments.Update(comment);
                 await _dbContext.SaveChangesAsync();
                 _logger.LogInformation("Comment with Id {CommentId} updated successfully", id);
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"comments 0-0/1");
                 return Ok(new { Message = "Comment updated successfully.", Code = 91 }); 
             }
             catch (Exception ex)
@@ -197,6 +211,8 @@ namespace PersonalPodcast.Controllers
                 _dbContext.comments.Remove(comment);
                 await _dbContext.SaveChangesAsync();
                 _logger.LogInformation($"Comment with Id {id} deleted successfully", id);
+                // Add Content-Range header
+                Response.Headers.Add("Content-Range", $"comments 0-0/1");
                 return Ok(new { Message = " Comment deleted successfully.", Code = 92 });
             }
             catch (Exception ex)
