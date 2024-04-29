@@ -98,7 +98,6 @@ namespace PersonalPodcast.Controllers
         [HttpGet("all"), Authorize(Roles = "Admin,SuperAdmin")]
         public async IAsyncEnumerable<User> GetAllUsers(int page = 1, string? range = null)
         {
-
             // Parse the range query parameter
 
             var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
@@ -107,6 +106,7 @@ namespace PersonalPodcast.Controllers
 
             // Add Content-Range header
             Response.Headers.Add("Content-Range", $"users {queryParams.Page * 10}-{(queryParams.Page * 10) + 10}/{_dBContext.Users.Count()}");
+
 
             await foreach (var user in users)
             {
