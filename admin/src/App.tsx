@@ -24,6 +24,8 @@ import PodcastEdit from "./components/PodcastEdit";
 import ShowEpisode from "./components/ShowEpisode";
 import authenticatorPulse from "./service/authenticatorPulse";
 import UsersEdit from "./components/UsersEdit";
+import CommentCreate from "./CommentCreate";
+import CommentEdit from "./components/CommentEdit";
 
 const httpClient = (url: string, options: Options = { headers: new Headers() }) => {
    if (!options.headers) {
@@ -93,7 +95,7 @@ const authProvider = {
 
       try {
          const response = await fetch(request);
-         if (response.status < 200 || response.status >= 300) {
+         if (response.status < 200 || (response.status >= 300 && response.status !== 404)) {
             throw new Error(response.statusText);
          }
       } catch (error) {
@@ -113,7 +115,7 @@ const authProvider = {
       });
       try {
          const response = await fetch(request);
-         if (response.status < 200 || response.status >= 300) {
+         if (response.status < 200 || (response.status >= 300 && response.status !== 404)) {
             throw new Error(response.statusText);
          }
          const data = await response.json();
@@ -181,13 +183,13 @@ const App = () => (
       <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
       <Resource
-         name="user/all"
+         name="user"
          list={ListUsers}
          options={{ pagination: { page: 0 } }}
          edit={UsersEdit}
       />
 
-      <Resource name="comments" list={ListComments} />
+      <Resource name="comments" list={ListComments} create={CommentCreate} edit={CommentEdit} />
    </Admin>
 );
 
