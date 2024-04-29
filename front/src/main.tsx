@@ -7,6 +7,8 @@ import Podcasts from "./pages/Podcasts";
 import Podcast from "./pages/Podcast";
 import Episode from "./pages/Episode";
 import About from "./pages/About";
+import Episodes from "./pages/Episodes";
+import Account from "./pages/Account";
 
 const router = createBrowserRouter([
    {
@@ -27,8 +29,7 @@ const router = createBrowserRouter([
    },
    {
       path: "/episodes",
-      element: <h1> Episodes </h1>,
-
+      element: <Episodes />,
    },
    {
       path: "/episode/:episodeId",
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
    },
    {
       path: "/account",
-      element: <div>Account</div>,
+      element: <Account />,
    },
 ]);
 

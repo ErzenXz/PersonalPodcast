@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../scss/Navigation.scss";
 import Logo from "../assets/logo.png";
 import { useState } from "react";
@@ -10,10 +10,16 @@ interface NavigationProps {
 
 function Navigation({ loggedIn }: NavigationProps) {
    const [isOpen, setIsOpen] = useState(false);
+   const navigator = useNavigate();
 
    return (
       <nav className="nav">
-         <div className="nav-h">
+         <div
+            className="nav-h"
+            onClick={() => {
+               navigator("/");
+            }}
+         >
             <img src={Logo} alt="logo" />
          </div>
          <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
