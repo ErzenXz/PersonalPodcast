@@ -159,7 +159,7 @@ function Episodes() {
 
                <div className="episodes-list">
                   {loading && <h1>Loading episodes...</h1>}
-                  {!loading && Array.isArray(episodes) && episodes.length > 0 && !searching
+                  {!loading && Array.isArray(episodes) && episodes.length > 0
                      ? episodes.map((episode) => (
                           <div
                              key={episode.id}
