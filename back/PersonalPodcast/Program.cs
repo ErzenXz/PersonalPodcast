@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins("https://personalpodcast.erzen.tk",
                             "https://personalpodcast.erzen.xyz",
-                            "http://localhost:5173",
+                            "https://admin.personalpodcast.erzen.tk",
                             "https://personalpodcast.pages.dev/")
             .AllowAnyMethod()
             .AllowAnyHeader()
