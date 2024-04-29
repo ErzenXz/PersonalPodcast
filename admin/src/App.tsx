@@ -24,7 +24,6 @@ import PodcastEdit from "./components/PodcastEdit";
 import ShowEpisode from "./components/ShowEpisode";
 import authenticatorPulse from "./service/authenticatorPulse";
 import UsersEdit from "./components/UsersEdit";
-import refreshToken from "./service/refresh_token";
 
 const httpClient = (url: string, options: Options = { headers: new Headers() }) => {
    if (!options.headers) {
@@ -79,21 +78,9 @@ const authProvider = {
    },
    checkAuth: async () => {
       const token = localStorage.getItem("accessToken");
-      const tokenExpireDate = localStorage.getItem("tokenExpireDate")
-         ? new Date(localStorage.getItem("tokenExpireDate")!)
-         : new Date();
 
-      // Check if the token is about to expire in the next minute
-      if (token && new Date() > new Date(tokenExpireDate.getTime() - 1 * 60000)) {
-         // Refresh the token
-         try {
-            await refreshToken();
-         } catch (error) {
-            throw new Error("Token refresh failed");
-         }
-      }
+      await authenticatorPulse();
 
-      // If the token is not about to expire, proceed with the regular check
       const request = new Request("https://api.erzen.tk/auth/info", {
          method: "GET",
          redirect: "follow" as RequestRedirect,
@@ -109,7 +96,6 @@ const authProvider = {
          if (response.status < 200 || response.status >= 300) {
             throw new Error(response.statusText);
          }
-         authenticatorPulse();
       } catch (error) {
          localStorage.removeItem("accessToken");
          throw new Error("Authentication failed");

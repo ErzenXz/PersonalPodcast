@@ -1,6 +1,6 @@
 import refreshToken from "./refresh_token";
 
-function authenticatorPulse(): void {
+async function authenticatorPulse(): Promise<void> {
    // Get the token expiration date and the access token from the local storage
 
    const tokenExpireDate = localStorage.getItem("tokenExpireDate");
