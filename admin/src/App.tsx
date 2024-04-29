@@ -174,10 +174,10 @@ const App = () => (
          edit={EpisodeEdit}
          show={ShowEpisode}
       />
-
       <Resource name="categories" list={ListCategory} create={CreateCategory} edit={EditCategory} />
 
       <Resource name="user/all" list={ListUsers} options={{ pagination: { page: 0 } }} />
+
    </Admin>
 );
 
