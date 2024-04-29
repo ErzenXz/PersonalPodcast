@@ -1,4 +1,4 @@
-﻿namespace PersonalPodcast.Models
+﻿namespace PersonalPodcast.DTO
 {
     public class UserRequest
     {

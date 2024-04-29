@@ -104,8 +104,8 @@ namespace PersonalPodcast.Controllers
             var comments = await _dbContext.comments
                 .Where(c => c.EpisodeId == episodeId)
                 .OrderByDescending(c => c.Date)
-                .Skip((queryParams.Page - 1) * 10)
-                .Take(10)
+                .Skip((queryParams.Page - 1) * queryParams.PerPage)
+                .Take(queryParams.PerPage)
                 .Select(c => new CommentResponse
                 {
                     Id = c.Id,
@@ -142,8 +142,8 @@ namespace PersonalPodcast.Controllers
 
             var comments = await _dbContext.comments
                 .OrderByDescending(c => c.Date)
-                .Skip((queryParams.Page - 1) * 10)
-                .Take(10)
+                .Skip((queryParams.Page - 1) * queryParams.PerPage)
+                .Take(queryParams.PerPage)
                 .Select(c => new CommentResponse
                 {
                     Id = c.Id,

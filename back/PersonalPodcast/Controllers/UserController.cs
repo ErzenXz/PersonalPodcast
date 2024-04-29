@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using PersonalPodcast.Data;
+using PersonalPodcast.DTO;
 using PersonalPodcast.Models;
 using PersonalPodcast.Services;
 using System.Security.Cryptography;
@@ -10,7 +11,7 @@ using System.Security.Cryptography;
 namespace PersonalPodcast.Controllers
 {
     [ApiController]
-    [Route("user")]
+    [Route("users")]
     public class UserController : ControllerBase
     {
 
@@ -26,7 +27,7 @@ namespace PersonalPodcast.Controllers
 
 
         
-        [HttpGet("id/{id}"), Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<User> GetUserById(long id)
         {
             var user = await _dBContext.Users.FindAsync(id);
@@ -95,17 +96,17 @@ namespace PersonalPodcast.Controllers
 
         }
 
-        [HttpGet("all"), Authorize(Roles = "Admin,SuperAdmin")]
-        public async IAsyncEnumerable<User> GetAllUsers(int page = 1, string? range = null)
+        [HttpGet, Authorize(Roles = "Admin,SuperAdmin")]
+        public async IAsyncEnumerable<User> GetAllUsers(string? range = null)
         {
             // Parse the range query parameter
 
             var queryParams = ParameterParser.ParseRangeAndSort(range, "sort");
 
-            var users = _dBContext.Users.Skip((queryParams.Page - 1) * 10).Take(10).AsAsyncEnumerable();
+            var users = _dBContext.Users.Skip((queryParams.Page - 1) * queryParams.PerPage).Take(queryParams.PerPage).AsAsyncEnumerable();
 
             // Add Content-Range header
-            Response.Headers.Add("Content-Range", $"users {queryParams.Page * 10}-{(queryParams.Page * 10) + 10}/{_dBContext.Users.Count()}");
+            Response.Headers.Add("Content-Range", $"users {queryParams.Page * queryParams.PerPage}-{(queryParams.Page * queryParams.PerPage) + queryParams.PerPage}/{_dBContext.Users.Count()}");
 
 
             await foreach (var user in users)
@@ -115,8 +116,8 @@ namespace PersonalPodcast.Controllers
         }
 
 
-        [HttpPut("update"),Authorize(Roles ="User,Admin,SuperAdmin")]
-        public async Task<IActionResult> UpdateUser(string username, string fullname, string email, string newPassword, DateTime lastlogin, DateTime firstlogin, string conIP, DateTime birthday)
+        [HttpPut("{id}"),Authorize(Roles ="User,Admin,SuperAdmin")]
+        public async Task<IActionResult> UpdateUser(UserUpdateRequest userUpdateRequest)
         {
 
             var refreshToken = Request.Cookies["refreshToken"];
@@ -133,24 +134,24 @@ namespace PersonalPodcast.Controllers
                 return Unauthorized(new { Message = "Unauthorized to perform this request.", Code = 76 });
             }
 
-            if (_dBContext.Users.Any(u => u.Username == username))
+            if (_dBContext.Users.Any(u => u.Username == userUpdateRequest.Username))
             {
                 return BadRequest(new { Message = "Username already in use.", Code = 8 });
             }
 
-            if (_dBContext.Users.Any(u => u.Email == email))
+            if (_dBContext.Users.Any(u => u.Email == userUpdateRequest.Email))
             {
                 return BadRequest(new { Message = "Email already in use.", Code = 7 });
             }
 
-            user.Username = username;
-            user.FullName = fullname;
-            user.Email = email;
-            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            user.FirstLogin = firstlogin;
-            user.LastLogin = lastlogin;
-            user.ConnectingIp = conIP;
-            user.Birthdate = birthday;
+            user.Username = userUpdateRequest.Username;
+            user.FullName = userUpdateRequest.Fullname;
+            user.Email = userUpdateRequest.Email;
+            user.Password = BCrypt.Net.BCrypt.HashPassword(userUpdateRequest.Password);
+            user.FirstLogin = userUpdateRequest.FirstLogin;
+            user.LastLogin = userUpdateRequest.LastLogin;
+            user.ConnectingIp = userUpdateRequest.ConIP;
+            user.Birthdate = userUpdateRequest.Birthday;
             // Generatge a new refresh token
             user.RefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             await _dBContext.SaveChangesAsync();
